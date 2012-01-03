@@ -1,3 +1,5 @@
+package com.pnegre.safe;
+
 import java.security.Key;
 import java.security.SecureRandom;
 

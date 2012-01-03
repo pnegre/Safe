@@ -19,6 +19,7 @@ public class SafeActivity extends ListActivity
 				"Linux", "OS/2" };
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
 		setListAdapter(adapter);
+	
 	}
 
 	@Override
