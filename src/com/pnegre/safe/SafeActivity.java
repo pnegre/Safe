@@ -13,17 +13,14 @@ import android.content.DialogInterface;
 
 public class SafeActivity extends ListActivity
 {
+	private Database database;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		Database db = new DatabaseImp();
-		db.init("jeje");
-		Secret[] secrets = db.getSecrets();
-		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
-		setListAdapter(adapter);
-	
+		database = new DatabaseImp();
 	}
 	
 	public void onResume()
@@ -31,17 +28,22 @@ public class SafeActivity extends ListActivity
 		super.onResume();
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 		alert.setTitle("Password");
+		// Set an EditText view to get user input   
+		final EditText input = new EditText(this);
+
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton) {  
+				public void onClick(DialogInterface dialog, int whichButton) {
+					database.init(input.getText().toString());
+					Secret[] secrets = database.getSecrets();
+					ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(SafeActivity.this, android.R.layout.simple_list_item_1, secrets);
+					setListAdapter(adapter); 
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
 				public void onClick(DialogInterface dialog, int whichButton) {  
 			}
 		});
-
-		// Set an EditText view to get user input   
-		final EditText input = new EditText(this); 
+ 
 		alert.setView(input);
 		alert.show();
 	}
