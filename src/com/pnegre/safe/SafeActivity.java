@@ -30,6 +30,7 @@ public class SafeActivity extends ListActivity
 		alert.setTitle("Password");
 		// Set an EditText view to get user input   
 		final EditText input = new EditText(this);
+		input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
 
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
 			public void onClick(DialogInterface dialog, int whichButton) {
