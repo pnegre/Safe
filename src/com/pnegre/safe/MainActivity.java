@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.MenuInflater;
 
 
-public class SafeActivity extends ListActivity
+public class MainActivity extends ListActivity
 {
 	private Database database;
 	
