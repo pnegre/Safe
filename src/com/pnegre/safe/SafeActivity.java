@@ -32,15 +32,12 @@ public class SafeActivity extends ListActivity
 		final EditText input = new EditText(this);
 
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton) {
-					database.init(input.getText().toString());
-					Secret[] secrets = database.getSecrets();
-					ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(SafeActivity.this, android.R.layout.simple_list_item_1, secrets);
-					setListAdapter(adapter); 
+			public void onClick(DialogInterface dialog, int whichButton) {
+				InitDatabase(input.getText().toString());
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton) {  
+			public void onClick(DialogInterface dialog, int whichButton) {  
 			}
 		});
  
@@ -48,23 +45,18 @@ public class SafeActivity extends ListActivity
 		alert.show();
 	}
 
+	void InitDatabase(String password)
+	{
+		database.init(password);
+		Secret[] secrets = database.getSecrets();
+		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
+		setListAdapter(adapter);
+	}
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		Secret item = (Secret) getListAdapter().getItem(position);
-/*
 		Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
-*/
-
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
-		alert.setTitle("Password");  
-/*
-		alert.setMessage("Enter Pin :");                
-*/
-
-		// Set an EditText view to get user input   
-		final EditText input = new EditText(this); 
-		alert.setView(input);
-		alert.show();
 	}
 }

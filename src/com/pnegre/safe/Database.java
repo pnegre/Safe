@@ -1,5 +1,10 @@
 package com.pnegre.safe;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.content.Context;
+import android.content.ContentValues;
+
 
 class Secret
 {
@@ -68,3 +73,55 @@ class DatabaseImp implements Database
 	{
 	}
 }
+
+
+
+
+// SQLite android database
+class SQL extends SQLiteOpenHelper
+{
+	static final String TAG = "Database";
+	static final String DB_NAME = "safe.db";
+	static final int DB_VERSION = 1;
+
+	// Constructor
+	public SQL(Context context)
+	{
+		super(context, DB_NAME, null, DB_VERSION);
+	}
+
+	// Called only once, first time the DB is created
+	public void onCreate(SQLiteDatabase db)
+	{
+		String sql = "create table secret ( id integer primary key autoincrement, name text, username text, password text )";
+		db.execSQL(sql);
+	}
+
+	// Called whenever newVersion != oldVersion
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+	{
+		db.execSQL("drop table if exists secret");
+		onCreate(db);
+	}
+
+	public void deleteAllData()
+	{
+		SQLiteDatabase db = getWritableDatabase();
+		db.execSQL("delete from secret");
+	}
+	
+	private void newSecret(Secret s)
+	{
+		SQLiteDatabase db = getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.clear();
+		values.put("name", s.name);
+		values.put("username", s.username);
+		values.put("password", s.password);
+		
+		db.insertOrThrow("secret", null, values);
+	}
+}
+
+
