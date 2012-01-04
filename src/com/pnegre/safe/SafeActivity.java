@@ -30,6 +30,11 @@ public class SafeActivity extends ListActivity
 	public void onResume()
 	{
 		super.onResume();
+		ShowMasterPwDialog();
+	}
+	
+	void ShowMasterPwDialog()
+	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 		alert.setTitle("Password");
 		// Set an EditText view to get user input   
@@ -83,6 +88,7 @@ public class SafeActivity extends ListActivity
 		switch (item.getItemId()) 
 		{
 		case R.id.masterpw:
+			ShowMasterPwDialog();
 			return true;
 
 		case R.id.newsecret:
