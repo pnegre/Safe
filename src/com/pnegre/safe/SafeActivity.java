@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuInflater;
+
 
 public class SafeActivity extends ListActivity
 {
@@ -60,4 +64,33 @@ public class SafeActivity extends ListActivity
 		Secret item = (Secret) getListAdapter().getItem(position);
 		Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
 	}
+	
+	
+	// Inflate res/menu/mainmenu.xml
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
+	}
+
+
+	// Respond to user click on menu
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId()) 
+		{
+		case R.id.masterpw:
+			return true;
+
+		case R.id.newsecret:
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 }
