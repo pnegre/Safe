@@ -26,6 +26,7 @@ class Secret
 interface Database
 {
 	void init(String password);
+	boolean Ready();
 	Secret[] getSecrets();
 	void newSecret(Secret s);
 }
@@ -34,15 +35,27 @@ interface Database
 class DatabaseImp implements Database
 {
 	private SimpleCrypt sc = null;
+	boolean ready = false;
 	
+	public boolean Ready()
+	{
+		return ready;
+	}
 	
 	public void init(String password)
 	{
-		sc = null;
+		try
+		{
+			sc = new SimpleCrypt(password);
+			ready = true;
+		} 
+		catch (Exception e) { }
 	}
 	
 	public Secret[] getSecrets()
 	{
+		if (ready == false) return null;
+		
 		Secret[] ss = { 
 			new Secret("meneame.net","us1","pw1"), 
 			new Secret("slashdot.org","abc","dfg"),
