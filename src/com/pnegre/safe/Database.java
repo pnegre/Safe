@@ -13,6 +13,11 @@ class Secret
 		username = us;
 		password = pw;
 	}
+	
+	public String toString()
+	{
+		return name;
+	}
 }
 
 

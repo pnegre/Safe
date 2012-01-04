@@ -14,10 +14,9 @@ public class SafeActivity extends ListActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-				"Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-				"Linux", "OS/2" };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
+		Database db = new DatabaseImp();
+		Secret[] secrets = db.getSecrets();
+		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
 		setListAdapter(adapter);
 	
 	}
@@ -25,7 +24,7 @@ public class SafeActivity extends ListActivity
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
-		String item = (String) getListAdapter().getItem(position);
+		Secret item = (Secret) getListAdapter().getItem(position);
 		Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
 	}
 }
