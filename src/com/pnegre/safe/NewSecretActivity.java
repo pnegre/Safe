@@ -6,6 +6,9 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.view.View;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 public class NewSecretActivity extends Activity
 {
 	private EditText sitenameET, siteusnameET, sitepasswordET;
@@ -39,8 +42,21 @@ public class NewSecretActivity extends Activity
 		String sname = sitenameET.getText().toString();
 		String usname = siteusnameET.getText().toString();
 		String pw = sitepasswordET.getText().toString();
-		Secret s = new Secret(sname,usname,pw);
-		database.newSecret(s);
-		finish();
+		if (sname.equals("") || pw.equals(""))
+		{
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+			alert.setTitle("No Blanks!");
+			alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			});
+			alert.show();
+		}
+		else
+		{
+			Secret s = new Secret(sname,usname,pw);
+			database.newSecret(s);
+			finish();
+		}
 	}
 }
