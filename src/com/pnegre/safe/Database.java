@@ -31,7 +31,8 @@ class Secret
 interface Database
 {
 	void init(String password);
-	boolean Ready();
+	void destroy();
+	boolean ready();
 	Secret[] getSecrets();
 	void newSecret(Secret s);
 }
@@ -40,11 +41,17 @@ interface Database
 class DatabaseImp implements Database
 {
 	private SimpleCrypt sc = null;
-	boolean ready = false;
+	boolean isready = false;
 	
-	public boolean Ready()
+	public boolean ready()
 	{
-		return ready;
+		return isready;
+	}
+	
+	public void destroy()
+	{
+		sc = null;
+		isready = false;
 	}
 	
 	public void init(String password)
@@ -52,14 +59,14 @@ class DatabaseImp implements Database
 		try
 		{
 			sc = new SimpleCrypt(password);
-			ready = true;
+			isready = true;
 		} 
 		catch (Exception e) { }
 	}
 	
 	public Secret[] getSecrets()
 	{
-		if (ready == false) return null;
+		if (isready == false) return null;
 		
 		Secret[] ss = { 
 			new Secret("meneame.net","us1","pw1"), 

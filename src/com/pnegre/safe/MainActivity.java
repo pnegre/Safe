@@ -18,6 +18,7 @@ import android.content.Intent;
 
 public class MainActivity extends ListActivity
 {
+	private SafeApp app;
 	private Database database;
 	
 	/** Called when the activity is first created. */
@@ -25,13 +26,31 @@ public class MainActivity extends ListActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		database = new DatabaseImp();
+		app = (SafeApp) getApplication();
+		database = app.database;
 	}
 	
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		database.destroy();
+	}
+	
+	@Override
 	public void onResume()
 	{
 		super.onResume();
-		showMasterPwDialog();
+		if (database.ready() == false)
+			showMasterPwDialog();
+		else
+			setAdapter();
 	}
 	
 	void showMasterPwDialog()
@@ -44,7 +63,9 @@ public class MainActivity extends ListActivity
 
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
 			public void onClick(DialogInterface dialog, int whichButton) {
-				InitDatabase(input.getText().toString());
+				String pw = input.getText().toString();
+				database.init(pw);
+				setAdapter();
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
@@ -56,9 +77,8 @@ public class MainActivity extends ListActivity
 		alert.show();
 	}
 
-	void InitDatabase(String password)
+	void setAdapter()
 	{
-		database.init(password);
 		Secret[] secrets = database.getSecrets();
 		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
 		setListAdapter(adapter);
