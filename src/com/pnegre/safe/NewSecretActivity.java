@@ -10,6 +10,8 @@ public class NewSecretActivity extends Activity
 {
 	private EditText sitenameET, siteusnameET, sitepasswordET;
 	private Button newsecretBT;
+	private SafeApp app;
+	private Database database;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -17,6 +19,8 @@ public class NewSecretActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newsecret);
+		app = (SafeApp) getApplication();
+		database = app.database;
 		
 		sitenameET = (EditText) findViewById(R.id.sitename);
 		siteusnameET = (EditText) findViewById(R.id.siteusname);
@@ -32,5 +36,11 @@ public class NewSecretActivity extends Activity
 	
 	void newSecret()
 	{
+		String sname = sitenameET.getText().toString();
+		String usname = siteusnameET.getText().toString();
+		String pw = sitepasswordET.getText().toString();
+		Secret s = new Secret(sname,usname,pw);
+		database.newSecret(s);
+		finish();
 	}
 }
