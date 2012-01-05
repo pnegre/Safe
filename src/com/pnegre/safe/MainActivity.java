@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.content.Intent;
 
 
 public class MainActivity extends ListActivity
@@ -30,10 +31,10 @@ public class MainActivity extends ListActivity
 	public void onResume()
 	{
 		super.onResume();
-		ShowMasterPwDialog();
+		showMasterPwDialog();
 	}
 	
-	void ShowMasterPwDialog()
+	void showMasterPwDialog()
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 		alert.setTitle("Password");
@@ -62,6 +63,13 @@ public class MainActivity extends ListActivity
 		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
 		setListAdapter(adapter);
 	}
+	
+	void newSecret()
+	{
+		Intent i = new Intent(this, NewSecretActivity.class);
+		//i.putExtra("tickid",tickid);
+		startActivity(i);
+	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) 
@@ -88,10 +96,11 @@ public class MainActivity extends ListActivity
 		switch (item.getItemId()) 
 		{
 		case R.id.masterpw:
-			ShowMasterPwDialog();
+			showMasterPwDialog();
 			return true;
 
 		case R.id.newsecret:
+			newSecret();
 			return true;
 
 		default:
