@@ -8,6 +8,6 @@ public class SafeApp extends Application
 	
 	public void onCreate()
 	{
-		database = new DatabaseImp();
+		database = new DatabaseImp(this);
 	}
 }

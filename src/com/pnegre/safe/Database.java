@@ -42,6 +42,12 @@ class DatabaseImp implements Database
 {
 	private SimpleCrypt sc = null;
 	boolean isready = false;
+	SQL sql;
+	
+	DatabaseImp(Context context)
+	{
+		sql = new SQL(context);
+	}
 	
 	public boolean ready()
 	{
@@ -78,6 +84,7 @@ class DatabaseImp implements Database
 	
 	public void newSecret(Secret s)
 	{
+		sql.newSecret(s);
 	}
 }
 
@@ -117,7 +124,7 @@ class SQL extends SQLiteOpenHelper
 		db.execSQL("delete from secret");
 	}
 	
-	private void newSecret(Secret s)
+	public void newSecret(Secret s)
 	{
 		SQLiteDatabase db = getWritableDatabase();
 
