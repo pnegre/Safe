@@ -99,7 +99,10 @@ public class MainActivity extends ListActivity
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
 		Secret item = (Secret) getListAdapter().getItem(position);
-		Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+		int secretId = item.id;
+		Intent i = new Intent(this, ShowSecretActivity.class);
+		i.putExtra("secretid",secretId);
+		startActivity(i);
 	}
 	
 	
