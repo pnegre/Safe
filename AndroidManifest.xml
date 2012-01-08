@@ -4,8 +4,10 @@
 	android:versionCode="1"
 	android:versionName="1.0">
 	
-	<application android:label="@string/app_name" 
-		android:name="SafeApp">
+	<application
+		android:label="@string/app_name" 
+		android:name="SafeApp"
+		android:icon="@drawable/lockicon">
 	
 		<activity android:name="MainActivity"
 			android:label="@string/app_name"
