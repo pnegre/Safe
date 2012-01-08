@@ -42,7 +42,7 @@ interface Database
 	void init(String password);
 	void destroy();
 	boolean ready();
-	Secret[] getSecrets() throws DatabaseException;
+	Secret[] getSecrets() throws Exception;
 	void newSecret(Secret s) throws Exception;
 	Secret getSecret(int id) throws Exception;
 }
@@ -86,7 +86,7 @@ class DatabaseImp implements Database
 		catch (Exception e) { }
 	}
 	
-	public Secret[] getSecrets() throws DatabaseException
+	public Secret[] getSecrets() throws Exception
 	{
 		assureReady();
 		
@@ -96,9 +96,9 @@ class DatabaseImp implements Database
 		while (cs.isAfterLast() == false)
 		{
 			int id = cs.getInt(0);
-			String name = cs.getString(1);
-			String username = cs.getString(2);
-			String password = cs.getString(3);
+			String name = sc.decrypt(cs.getString(1));
+			String username = sc.decrypt(cs.getString(2));
+			String password = sc.decrypt(cs.getString(3));
 			Secret s = new Secret(id,name,username,password);
 			result.add(s);
 			cs.moveToNext();
