@@ -44,6 +44,7 @@ interface Database
 	boolean ready();
 	Secret[] getSecrets() throws DatabaseException;
 	void newSecret(Secret s) throws Exception;
+	Secret getSecret(int id) throws Exception;
 }
 
 
@@ -116,6 +117,16 @@ class DatabaseImp implements Database
 	{
 		assureReady();
 		sql.newSecret(sc.crypt(s.name), sc.crypt(s.username), sc.crypt(s.password));
+	}
+	
+	public Secret getSecret(int id) throws Exception
+	{
+		Secret ss[] = getSecrets();
+		for (Secret s : ss)
+		{
+			if (s.id == id) return s;
+		}
+		return null;
 	}
 }
 
