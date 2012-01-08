@@ -15,12 +15,14 @@ class Secret
 	String name;
 	String username;
 	String password;
+	int id;
 	
-	Secret(String nm, String us, String pw)
+	Secret(int i, String nm, String us, String pw)
 	{
 		name = nm;
 		username = us;
 		password = pw;
+		id = i;
 	}
 	
 	public String toString()
@@ -96,7 +98,7 @@ class DatabaseImp implements Database
 			String name = cs.getString(1);
 			String username = cs.getString(2);
 			String password = cs.getString(3);
-			Secret s = new Secret(name,username,password);
+			Secret s = new Secret(id,name,username,password);
 			result.add(s);
 			cs.moveToNext();
 		}

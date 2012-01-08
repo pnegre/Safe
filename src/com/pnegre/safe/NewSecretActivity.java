@@ -56,7 +56,7 @@ public class NewSecretActivity extends Activity
 		{
 			try
 			{
-				Secret s = new Secret(sname,usname,pw);
+				Secret s = new Secret(0,sname,usname,pw);
 				database.newSecret(s);
 				finish();
 			} catch (Exception e) { }
