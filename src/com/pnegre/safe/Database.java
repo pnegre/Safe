@@ -134,6 +134,7 @@ class DatabaseImp implements Database
 	public void deleteSecret(int id) throws Exception
 	{
 		assureReady();
+		sql.deleteSecret(id);
 	}
 }
 
@@ -192,6 +193,12 @@ class SQL extends SQLiteOpenHelper
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cs = db.query("secret", null, null, null, null, null, null);
 		return cs;
+	}
+	
+	void deleteSecret(int id)
+	{
+		SQLiteDatabase db = getReadableDatabase();
+		db.execSQL("delete from secret where id=" + String.valueOf(id));
 	}
 }
 
