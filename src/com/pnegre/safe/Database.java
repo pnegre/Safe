@@ -45,6 +45,7 @@ interface Database
 	Secret[] getSecrets() throws Exception;
 	void newSecret(Secret s) throws Exception;
 	Secret getSecret(int id) throws Exception;
+	void deleteSecret(int id) throws Exception;
 }
 
 
@@ -121,12 +122,18 @@ class DatabaseImp implements Database
 	
 	public Secret getSecret(int id) throws Exception
 	{
+		assureReady();
 		Secret ss[] = getSecrets();
 		for (Secret s : ss)
 		{
 			if (s.id == id) return s;
 		}
 		return null;
+	}
+	
+	public void deleteSecret(int id) throws Exception
+	{
+		assureReady();
 	}
 }
 

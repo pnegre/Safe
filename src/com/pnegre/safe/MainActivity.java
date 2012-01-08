@@ -91,7 +91,6 @@ public class MainActivity extends ListActivity
 	void newSecret()
 	{
 		Intent i = new Intent(this, NewSecretActivity.class);
-		//i.putExtra("tickid",tickid);
 		startActivity(i);
 	}
 
