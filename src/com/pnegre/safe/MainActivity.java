@@ -79,9 +79,13 @@ public class MainActivity extends ListActivity
 
 	void setAdapter()
 	{
-		Secret[] secrets = database.getSecrets();
-		ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
-		setListAdapter(adapter);
+		try
+		{
+			Secret[] secrets = database.getSecrets();
+			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
+			setListAdapter(adapter);
+		}
+		catch (DatabaseException e) { }
 	}
 	
 	void newSecret()

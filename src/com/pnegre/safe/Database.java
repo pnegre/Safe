@@ -4,6 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.Context;
 import android.content.ContentValues;
+import android.database.Cursor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 class Secret
@@ -26,6 +30,9 @@ class Secret
 }
 
 
+class DatabaseException extends Exception 
+{
+}
 
 
 interface Database
@@ -33,8 +40,8 @@ interface Database
 	void init(String password);
 	void destroy();
 	boolean ready();
-	Secret[] getSecrets();
-	void newSecret(Secret s);
+	Secret[] getSecrets() throws DatabaseException;
+	void newSecret(Secret s) throws Exception;
 }
 
 
@@ -47,6 +54,12 @@ class DatabaseImp implements Database
 	DatabaseImp(Context context)
 	{
 		sql = new SQL(context);
+	}
+	
+	// Make sure that all is ready to go
+	void assureReady() throws DatabaseException
+	{
+		if (isready == false) throw new DatabaseException();
 	}
 	
 	public boolean ready()
@@ -70,21 +83,37 @@ class DatabaseImp implements Database
 		catch (Exception e) { }
 	}
 	
-	public Secret[] getSecrets()
+	public Secret[] getSecrets() throws DatabaseException
 	{
-		if (isready == false) return null;
+		assureReady();
 		
-		Secret[] ss = { 
-			new Secret("meneame.net","us1","pw1"), 
-			new Secret("slashdot.org","abc","dfg"),
-			new Secret("Barrapunto.org","paba","mego")
-		};
+		List result = new ArrayList();
+		Cursor cs = sql.getSecrets();
+		cs.moveToFirst();
+		while (cs.isAfterLast() == false)
+		{
+			int id = cs.getInt(0);
+			String name = cs.getString(1);
+			String username = cs.getString(2);
+			String password = cs.getString(3);
+			Secret s = new Secret(name,username,password);
+			result.add(s);
+			cs.moveToNext();
+		}
+		
+		int sz = result.size();
+		Secret[] ss = new Secret[sz];
+		int j;
+		for(j=0;j<sz;j++)
+			ss[j] = (Secret) result.get(j);
+		
 		return ss;
 	}
 	
-	public void newSecret(Secret s)
+	public void newSecret(Secret s) throws Exception
 	{
-		sql.newSecret(s);
+		assureReady();
+		sql.newSecret(sc.crypt(s.name), sc.crypt(s.username), sc.crypt(s.password));
 	}
 }
 
@@ -124,17 +153,25 @@ class SQL extends SQLiteOpenHelper
 		db.execSQL("delete from secret");
 	}
 	
-	public void newSecret(Secret s)
+	// Stores encrypted information on sql database
+	public void newSecret(String encName, String encUsername, String encPassword)
 	{
 		SQLiteDatabase db = getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.clear();
-		values.put("name", s.name);
-		values.put("username", s.username);
-		values.put("password", s.password);
+		values.put("name", encName);
+		values.put("username", encUsername);
+		values.put("password", encPassword);
 		
 		db.insertOrThrow("secret", null, values);
+	}
+	
+	public Cursor getSecrets()
+	{
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor cs = db.query("secret", null, null, null, null, null, null);
+		return cs;
 	}
 }
 

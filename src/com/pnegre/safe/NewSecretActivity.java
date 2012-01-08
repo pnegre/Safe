@@ -54,9 +54,12 @@ public class NewSecretActivity extends Activity
 		}
 		else
 		{
-			Secret s = new Secret(sname,usname,pw);
-			database.newSecret(s);
-			finish();
+			try
+			{
+				Secret s = new Secret(sname,usname,pw);
+				database.newSecret(s);
+				finish();
+			} catch (Exception e) { }
 		}
 	}
 }
