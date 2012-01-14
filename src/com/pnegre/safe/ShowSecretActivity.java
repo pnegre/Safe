@@ -6,6 +6,7 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.view.View;
 import android.widget.CheckBox;
+import android.util.Log;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -59,7 +60,10 @@ public class ShowSecretActivity extends Activity
 				}
 			});
 		} 
-		catch (Exception e) { }
+		catch (Exception e) 
+		{
+			Log.d(SafeApp.LOG_TAG, "Exception in ShowSecretActivity.onCreate");
+		}
 	}
 	
 	// Mostra diàleg per esborrar el secret
@@ -87,7 +91,11 @@ public class ShowSecretActivity extends Activity
 		try
 		{
 			database.deleteSecret(theSecret.id);
-		} catch (Exception e) { }
+		}
+		catch (Exception e) 
+		{
+			Log.d(SafeApp.LOG_TAG, "Exception deleting secret");
+		}
 		finish();
 	}
 	
@@ -96,7 +104,7 @@ public class ShowSecretActivity extends Activity
 	void showPasswordFlip()
 	{
 		if (showPassword == false)
-			tpw.setText("XXXXXXXX");
+			tpw.setText(SafeApp.PASS_HIDE_STRING);
 		else
 			tpw.setText(theSecret.password);
 		
