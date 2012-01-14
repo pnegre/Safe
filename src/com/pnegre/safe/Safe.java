@@ -28,7 +28,7 @@ public class Safe extends ListActivity
 	{
 		super.onCreate(savedInstanceState);
 		app = (SafeApp) getApplication();
-		database = app.database;
+		database = app.getDatabase();
 	}
 	
 	@Override

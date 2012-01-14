@@ -4,13 +4,18 @@ import android.app.Application;
 
 public class SafeApp extends Application
 {
-	Database database;
+	private Database mDatabase;
 	
 	public static final String LOG_TAG = "Safe";
 	public static final String PASS_HIDE_STRING = "********";
 	
 	public void onCreate()
 	{
-		database = new DatabaseImp(this);
+		mDatabase = new DatabaseImp(this);
+	}
+	
+	Database getDatabase()
+	{
+		return mDatabase;
 	}
 }

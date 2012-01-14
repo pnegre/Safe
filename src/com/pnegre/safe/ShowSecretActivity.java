@@ -15,15 +15,15 @@ import android.content.DialogInterface;
 
 public class ShowSecretActivity extends Activity
 {
-	private boolean showPassword = false;
-	private SafeApp app;
-	private Database database;
-	private Secret theSecret;
-	private TextView tname;
-	private TextView tusname;
-	private TextView tpw;
-	private Button butDel;
-	private CheckBox cbShowpw;
+	private boolean   mShowPassword = false;
+	private SafeApp   mApp;
+	private Database  mDatabase;
+	private Secret    mSecret;
+	private TextView  mTVName;
+	private TextView  mTVUsname;
+	private TextView  mTVPassword;
+	private Button    mButtonDel;
+	private CheckBox  mCBShowPw;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -31,30 +31,30 @@ public class ShowSecretActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.showsecret);
-		app = (SafeApp) getApplication();
-		database = app.database;
+		mApp = (SafeApp) getApplication();
+		mDatabase = mApp.getDatabase();
 		
 		try
 		{
 			Bundle extras = getIntent().getExtras();
 			int secretId = extras.getInt("secretid");
-			theSecret = database.getSecret(secretId);
-			tname = (TextView) findViewById(R.id.secretsitename);
-			tname.setText(theSecret.name);
-			tusname = (TextView) findViewById(R.id.secretsiteusname);
-			tusname.setText(theSecret.username);
-			tpw = (TextView) findViewById(R.id.secretsitepw);
+			mSecret = mDatabase.getSecret(secretId);
+			mTVName = (TextView) findViewById(R.id.secretsitename);
+			mTVName.setText(mSecret.name);
+			mTVUsname = (TextView) findViewById(R.id.secretsiteusname);
+			mTVUsname.setText(mSecret.username);
+			mTVPassword = (TextView) findViewById(R.id.secretsitepw);
 			showPasswordFlip();
 			
-			cbShowpw = (CheckBox) findViewById(R.id.checkpw);
-			cbShowpw.setOnClickListener(new View.OnClickListener() {
+			mCBShowPw = (CheckBox) findViewById(R.id.checkpw);
+			mCBShowPw.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					showPasswordFlip();
 				}
 			});
 			
-			butDel = (Button) findViewById(R.id.butdelsecret);
-			butDel.setOnClickListener(new View.OnClickListener() {
+			mButtonDel = (Button) findViewById(R.id.butdelsecret);
+			mButtonDel.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					showDeleteDialog();
 				}
@@ -90,7 +90,7 @@ public class ShowSecretActivity extends Activity
 	{
 		try
 		{
-			database.deleteSecret(theSecret.id);
+			mDatabase.deleteSecret(mSecret.id);
 		}
 		catch (Exception e) 
 		{
@@ -103,11 +103,11 @@ public class ShowSecretActivity extends Activity
 	// O sigui, va alternant.
 	void showPasswordFlip()
 	{
-		if (showPassword == false)
-			tpw.setText(SafeApp.PASS_HIDE_STRING);
+		if (mShowPassword == false)
+			mTVPassword.setText(SafeApp.PASS_HIDE_STRING);
 		else
-			tpw.setText(theSecret.password);
+			mTVPassword.setText(mSecret.password);
 		
-		showPassword = ! showPassword;
+		mShowPassword = ! mShowPassword;
 	}
 }

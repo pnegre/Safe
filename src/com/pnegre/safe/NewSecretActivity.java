@@ -23,7 +23,7 @@ public class NewSecretActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newsecret);
 		app = (SafeApp) getApplication();
-		database = app.database;
+		database = app.getDatabase();
 		
 		sitenameET = (EditText) findViewById(R.id.sitename);
 		siteusnameET = (EditText) findViewById(R.id.siteusname);

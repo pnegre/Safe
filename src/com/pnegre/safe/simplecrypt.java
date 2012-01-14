@@ -10,33 +10,31 @@ import javax.crypto.KeyGenerator;
 
 class SimpleCrypt
 {
-	private Key secretKey;
+	private Key    mSecretKey;
+	private Cipher mCipher;
 	
 	SimpleCrypt(String masterPw) throws Exception
 	{
 		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 		sr.setSeed(masterPw.getBytes());
 		keyGenerator.init(128,sr);
-		secretKey = keyGenerator.generateKey();
+		mSecretKey = keyGenerator.generateKey();
+		mCipher = Cipher.getInstance("AES");
 	}
 	
 	String crypt(String clear) throws Exception
 	{
-		Cipher myCipher = Cipher.getInstance("AES");
-		myCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] result = myCipher.doFinal(clear.getBytes());
+		mCipher.init(Cipher.ENCRYPT_MODE, mSecretKey);
+		byte[] result = mCipher.doFinal(clear.getBytes());
 		return Base64.encodeBytes(result);
 	}
 	
-	String decrypt(String s) throws Exception
+	String decrypt(String encrypted) throws Exception
 	{
-		byte[] d = Base64.decode(s.getBytes());
-		
-		Cipher myCipher = Cipher.getInstance("AES");
-		myCipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] result = myCipher.doFinal(d);
+		byte[] d = Base64.decode(encrypted.getBytes());
+		mCipher.init(Cipher.DECRYPT_MODE, mSecretKey);
+		byte[] result = mCipher.doFinal(d);
 		return new String(result);
 	}
 }
