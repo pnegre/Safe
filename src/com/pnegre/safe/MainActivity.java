@@ -20,6 +20,7 @@ public class MainActivity extends ListActivity
 {
 	private SafeApp app;
 	private Database database;
+	private boolean showingDialog = false;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -47,6 +48,8 @@ public class MainActivity extends ListActivity
 	public void onResume()
 	{
 		super.onResume();
+		if (showingDialog) return;
+		
 		if (database.ready() == false)
 			showMasterPwDialog();
 		else
@@ -66,15 +69,18 @@ public class MainActivity extends ListActivity
 				String pw = input.getText().toString();
 				database.init(pw);
 				setAdapter();
+				showingDialog = false;
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
 			public void onClick(DialogInterface dialog, int whichButton) {  
+				showingDialog = false;
 			}
 		});
  
 		alert.setView(input);
 		alert.show();
+		showingDialog = true;
 	}
 
 	void setAdapter()
