@@ -7,6 +7,10 @@ import android.widget.Button;
 import android.view.View;
 import android.widget.CheckBox;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
+
 
 public class ShowSecretActivity extends Activity
 {
@@ -32,7 +36,7 @@ public class ShowSecretActivity extends Activity
 		try
 		{
 			Bundle extras = getIntent().getExtras();
-			final int secretId = extras.getInt("secretid");
+			int secretId = extras.getInt("secretid");
 			theSecret = database.getSecret(secretId);
 			tname = (TextView) findViewById(R.id.secretsitename);
 			tname.setText(theSecret.name);
@@ -51,15 +55,40 @@ public class ShowSecretActivity extends Activity
 			butDel = (Button) findViewById(R.id.butdelsecret);
 			butDel.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					try
-					{
-						database.deleteSecret(secretId);
-					} catch (Exception e) { }
-					finish();
+					showDeleteDialog();
 				}
 			});
 		} 
 		catch (Exception e) { }
+	}
+	
+	// Mostra diàleg per esborrar el secret
+	void showDeleteDialog()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+		alert.setTitle("Are you sure?");
+		
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
+			public void onClick(DialogInterface dialog, int whichButton) {
+				deleteSecret();
+			}
+		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
+			public void onClick(DialogInterface dialog, int whichButton) {  
+			}
+		});
+		
+		alert.show();
+	}
+	
+	// Esborra el secret
+	void deleteSecret()
+	{
+		try
+		{
+			database.deleteSecret(theSecret.id);
+		} catch (Exception e) { }
+		finish();
 	}
 	
 	// Mostra "XXXXXXXX" o la password, cada vegada que es crida la funció
