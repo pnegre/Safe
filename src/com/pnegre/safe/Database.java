@@ -25,6 +25,13 @@ class Secret
 		id = i;
 	}
 	
+	void decrypt(SimpleCrypt sc) throws Exception
+	{
+		name = sc.decrypt(name);
+		username = sc.decrypt(username);
+		password = sc.decrypt(username);
+	}
+	
 	public String toString()
 	{
 		return name;
@@ -91,27 +98,18 @@ class DatabaseImp implements Database
 	{
 		assureReady();
 		
-		List result = new ArrayList();
-		Cursor cs = sql.getSecrets();
-		cs.moveToFirst();
-		while (cs.isAfterLast() == false)
+		List list = sql.getSecrets();
+		int sz = list.size();
+		Secret[] result = new Secret[sz];
+		for(int j=0;j<sz;j++)
 		{
-			int id = cs.getInt(0);
-			String name = sc.decrypt(cs.getString(1));
-			String username = sc.decrypt(cs.getString(2));
-			String password = sc.decrypt(cs.getString(3));
-			Secret s = new Secret(id,name,username,password);
-			result.add(s);
-			cs.moveToNext();
+			Secret s = (Secret) list.get(j);
+			s.name = sc.decrypt(s.name);
+			s.username = sc.decrypt(s.username);
+			s.password = sc.decrypt(s.password);
+			result[j] = s;
 		}
-		
-		int sz = result.size();
-		Secret[] ss = new Secret[sz];
-		int j;
-		for(j=0;j<sz;j++)
-			ss[j] = (Secret) result.get(j);
-		
-		return ss;
+		return result;
 	}
 	
 	public void newSecret(Secret s) throws Exception
@@ -188,11 +186,23 @@ class SQL extends SQLiteOpenHelper
 		db.insertOrThrow("secret", null, values);
 	}
 	
-	public Cursor getSecrets()
+	public List getSecrets()
 	{
 		SQLiteDatabase db = getReadableDatabase();
+		List result = new ArrayList();
 		Cursor cs = db.query("secret", null, null, null, null, null, null);
-		return cs;
+		cs.moveToFirst();
+		while (cs.isAfterLast() == false)
+		{
+			int id = cs.getInt(0);
+			String name = cs.getString(1);
+			String username = cs.getString(2);
+			String password = cs.getString(3);
+			Secret s = new Secret(id,name,username,password);
+			result.add(s);
+			cs.moveToNext();
+		}
+		return result;
 	}
 	
 	void deleteSecret(int id)
