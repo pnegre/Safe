@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="CodeFont" parent="@android:style/TextAppearance.Medium">
+	
+	<style name="MyFont" parent="@android:style/TextAppearance.Medium">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textColor">#FFFFFF</item>
 		<item name="android:typeface">sans</item>
-		<item name="android:textSize">17sp</item>
+		<item name="android:textSize">22sp</item>
 	</style>
+	
+	<style name="MyFont.monospace">
+		<item name="android:typeface">monospace</item>
+		<item name="android:textColor">#FF5555</item>
+		
+	</style>
+	
+	<style name="Separator">
+		<item name="android:background">#CCCCCC</item> 
+		<item name="android:layout_centerVertical">true</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">2dip</item>
+		<item name="android:layout_marginBottom">15dip</item>
+		<item name="android:layout_marginTop">15dip</item>
+		<item name="android:layout_alignParentTop">true</item>
+	</style>
+	
 </resources>
