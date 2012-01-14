@@ -16,7 +16,7 @@ import android.view.MenuInflater;
 import android.content.Intent;
 
 
-public class MainActivity extends ListActivity
+public class Safe extends ListActivity
 {
 	private SafeApp app;
 	private Database database;

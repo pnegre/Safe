@@ -9,7 +9,7 @@
 		android:name="SafeApp"
 		android:icon="@drawable/lockicon">
 	
-		<activity android:name="MainActivity"
+		<activity android:name="Safe"
 			android:label="@string/app_name"
 			android:screenOrientation="portrait">
 			
