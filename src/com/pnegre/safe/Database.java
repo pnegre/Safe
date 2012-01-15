@@ -48,7 +48,7 @@ interface Database
 	void init(String password);
 	void destroy();
 	boolean ready();
-	Secret[] getSecrets() throws Exception;
+	List getSecrets() throws Exception;
 	void newSecret(Secret s) throws Exception;
 	Secret getSecret(int id) throws Exception;
 	void deleteSecret(int id) throws Exception;
@@ -104,7 +104,7 @@ class DatabaseImp implements Database
 		}
 	}
 	
-	public Secret[] getSecrets() throws Exception
+	public List getSecrets() throws Exception
 	{
 		assureReady();
 		
@@ -117,7 +117,10 @@ class DatabaseImp implements Database
 			s.password = sc.decrypt(s.password);
 		}
 		
+		return list;
 		
+		
+/*
 		int sz = list.size();
 		Secret[] result = new Secret[sz];
 		for(int j=0;j<sz;j++)
@@ -126,6 +129,7 @@ class DatabaseImp implements Database
 			result[j] = s;
 		}
 		return result;
+*/
 	}
 	
 	public void newSecret(Secret s) throws Exception
@@ -137,11 +141,10 @@ class DatabaseImp implements Database
 	public Secret getSecret(int id) throws Exception
 	{
 		assureReady();
-		Secret ss[] = getSecrets();
+		List<Secret> ss = getSecrets();
 		for (Secret s : ss)
-		{
 			if (s.id == id) return s;
-		}
+		
 		return null;
 	}
 	

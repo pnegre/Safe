@@ -1,5 +1,7 @@
 package com.pnegre.safe;
 
+import java.util.List;
+
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -89,8 +91,10 @@ public class Safe extends ListActivity
 	{
 		try
 		{
-			Secret[] secrets = database.getSecrets();
-			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secrets);
+			List<Secret> secrets = database.getSecrets();
+			Secret[] secretsArray = new Secret[secrets.size()];
+			secrets.toArray(secretsArray);
+			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
 			setListAdapter(adapter);
 		}
 		catch (Exception e) { }
