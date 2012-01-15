@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.view.View;
+import android.util.Log;
 
 import android.widget.EditText;
 import android.app.AlertDialog;
@@ -97,7 +98,10 @@ public class Safe extends ListActivity
 			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
 			setListAdapter(adapter);
 		}
-		catch (Exception e) { }
+		catch (Exception e) 
+		{
+			Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (Safe class)"); 
+		}
 	}
 	
 	void newSecret()

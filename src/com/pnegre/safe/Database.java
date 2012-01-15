@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 
 class Secret
@@ -107,29 +108,16 @@ class DatabaseImp implements Database
 	public List getSecrets() throws Exception
 	{
 		assureReady();
-		
 		List<Secret> list = sql.getSecrets();
-		
 		for (Secret s : list) 
 		{
 			s.name = sc.decrypt(s.name);
 			s.username = sc.decrypt(s.username);
 			s.password = sc.decrypt(s.password);
 		}
+		//Collections.sort(list);
 		
 		return list;
-		
-		
-/*
-		int sz = list.size();
-		Secret[] result = new Secret[sz];
-		for(int j=0;j<sz;j++)
-		{
-			Secret s = (Secret) list.get(j);
-			result[j] = s;
-		}
-		return result;
-*/
 	}
 	
 	public void newSecret(Secret s) throws Exception
