@@ -68,8 +68,10 @@ public class Safe extends ListActivity
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String pw = input.getText().toString();
 				database.init(pw);
-				setAdapter();
-				showingDialog = false;
+				if (database.ready()) {
+					setAdapter();
+					showingDialog = false;
+				}
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
@@ -96,6 +98,8 @@ public class Safe extends ListActivity
 	
 	void newSecret()
 	{
+		if (!database.ready()) return;
+		
 		Intent i = new Intent(this, NewSecretActivity.class);
 		startActivity(i);
 	}
