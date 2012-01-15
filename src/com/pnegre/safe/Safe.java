@@ -132,7 +132,8 @@ public class Safe extends ListActivity
 		switch (item.getItemId()) 
 		{
 		case R.id.masterpw:
-			showMasterPwDialog();
+			if (!database.ready())
+				showMasterPwDialog();
 			return true;
 
 		case R.id.newsecret:
