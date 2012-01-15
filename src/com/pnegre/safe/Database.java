@@ -108,15 +108,21 @@ class DatabaseImp implements Database
 	{
 		assureReady();
 		
-		List list = sql.getSecrets();
+		List<Secret> list = sql.getSecrets();
+		
+		for (Secret s : list) 
+		{
+			s.name = sc.decrypt(s.name);
+			s.username = sc.decrypt(s.username);
+			s.password = sc.decrypt(s.password);
+		}
+		
+		
 		int sz = list.size();
 		Secret[] result = new Secret[sz];
 		for(int j=0;j<sz;j++)
 		{
 			Secret s = (Secret) list.get(j);
-			s.name = sc.decrypt(s.name);
-			s.username = sc.decrypt(s.username);
-			s.password = sc.decrypt(s.password);
 			result[j] = s;
 		}
 		return result;
