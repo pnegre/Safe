@@ -19,19 +19,12 @@ class Secret
 	String password;
 	int id;
 	
-	Secret(int i, String nm, String us, String pw)
+	Secret(int id_, String name_, String username_, String password_)
 	{
-		name = nm;
-		username = us;
-		password = pw;
-		id = i;
-	}
-	
-	void decrypt(SimpleCrypt sc) throws Exception
-	{
-		name = sc.decrypt(name);
-		username = sc.decrypt(username);
-		password = sc.decrypt(username);
+		name = name_;
+		username = username_;
+		password = password_;
+		id = id_;
 	}
 	
 	public String toString()
