@@ -7,12 +7,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
+import java.util.*;
 
 
-class Secret
+class Secret implements Comparable
 {
 	String name;
 	String username;
@@ -30,6 +28,12 @@ class Secret
 	public String toString()
 	{
 		return name;
+	}
+	
+	public int compareTo(Object o)
+	{
+		Secret s = (Secret) o;
+		return name.compareTo(s.name);
 	}
 }
 
@@ -108,7 +112,7 @@ class DatabaseImp implements Database
 			s.username = sc.decrypt(s.username);
 			s.password = sc.decrypt(s.password);
 		}
-		//Collections.sort(list);
+		Collections.sort(list);
 		
 		return list;
 	}
