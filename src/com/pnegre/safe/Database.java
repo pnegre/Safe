@@ -146,7 +146,6 @@ class DatabaseImp implements Database
 // SQLite android database
 class SQL extends SQLiteOpenHelper
 {
-	static final String TAG = "Database";
 	static final String DB_NAME = "safe.db";
 	static final int DB_VERSION = 2;
 
