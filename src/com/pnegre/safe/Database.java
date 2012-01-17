@@ -55,30 +55,30 @@ interface Database
 
 class DatabaseImp implements Database
 {
-	private SimpleCrypt sc = null;
-	boolean isready = false;
-	SQL sql;
+	private SimpleCrypt mCrypt = null;
+	boolean mIsReady = false;
+	SQL mSQL;
 	
 	DatabaseImp(Context context)
 	{
-		sql = new SQL(context);
+		mSQL = new SQL(context);
 	}
 	
 	// Make sure that all is ready to go
 	void assureReady() throws DatabaseException
 	{
-		if (isready == false) throw new DatabaseException();
+		if (mIsReady == false) throw new DatabaseException();
 	}
 	
 	public boolean ready()
 	{
-		return isready;
+		return mIsReady;
 	}
 	
 	public void destroy()
 	{
-		sc = null;
-		isready = false;
+		mCrypt = null;
+		mIsReady = false;
 	}
 	
 	// Create the cipher object
@@ -87,14 +87,14 @@ class DatabaseImp implements Database
 	{
 		try
 		{
-			sc = new SimpleCrypt(password);
-			String pw = sql.getEncryptedPassword();
+			mCrypt = new SimpleCrypt(password);
+			String pw = mSQL.getEncryptedPassword();
 			if (pw == null)
-				sql.storeEncryptedPassword(sc.crypt(password));
+				mSQL.storeEncryptedPassword(mCrypt.crypt(password));
 			else
-				if (! sc.crypt(password).equals(pw)) throw new DatabaseException();
+				if (! mCrypt.crypt(password).equals(pw)) throw new DatabaseException();
 			
-			isready = true;
+			mIsReady = true;
 		}
 		catch (Exception e) 
 		{
@@ -105,12 +105,12 @@ class DatabaseImp implements Database
 	public List getSecrets() throws Exception
 	{
 		assureReady();
-		List<Secret> list = sql.getSecrets();
+		List<Secret> list = mSQL.getSecrets();
 		for (Secret s : list) 
 		{
-			s.name = sc.decrypt(s.name);
-			s.username = sc.decrypt(s.username);
-			s.password = sc.decrypt(s.password);
+			s.name = mCrypt.decrypt(s.name);
+			s.username = mCrypt.decrypt(s.username);
+			s.password = mCrypt.decrypt(s.password);
 		}
 		Collections.sort(list);
 		
@@ -120,7 +120,7 @@ class DatabaseImp implements Database
 	public void newSecret(Secret s) throws Exception
 	{
 		assureReady();
-		sql.newSecret(sc.crypt(s.name), sc.crypt(s.username), sc.crypt(s.password));
+		mSQL.newSecret(mCrypt.crypt(s.name), mCrypt.crypt(s.username), mCrypt.crypt(s.password));
 	}
 	
 	public Secret getSecret(int id) throws Exception
@@ -136,7 +136,7 @@ class DatabaseImp implements Database
 	public void deleteSecret(int id) throws Exception
 	{
 		assureReady();
-		sql.deleteSecret(id);
+		mSQL.deleteSecret(id);
 	}
 }
 
