@@ -59,6 +59,36 @@ public class Safe extends ListActivity
 			setAdapter();
 	}
 	
+	// Inflate res/menu/mainmenu.xml
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
+	}
+
+
+	// Respond to user click on menu
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId()) 
+		{
+		case R.id.masterpw:
+			if (!database.ready())
+				showMasterPwDialog();
+			return true;
+
+		case R.id.newsecret:
+			newSecret();
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	void showMasterPwDialog()
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
@@ -123,34 +153,6 @@ public class Safe extends ListActivity
 	}
 	
 	
-	// Inflate res/menu/mainmenu.xml
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.mainmenu, menu);
-		return true;
-	}
 
-
-	// Respond to user click on menu
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId()) 
-		{
-		case R.id.masterpw:
-			if (!database.ready())
-				showMasterPwDialog();
-			return true;
-
-		case R.id.newsecret:
-			newSecret();
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
 
 }
