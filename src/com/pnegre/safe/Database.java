@@ -102,25 +102,39 @@ class DatabaseImp implements Database
 		}
 	}
 	
+	private void encryptSecret(Secret s) throws Exception
+	{
+		s.name = mCrypt.crypt(s.name);
+		s.username = mCrypt.crypt(s.username);
+		s.password = mCrypt.crypt(s.password);
+	}
+	
+	private void decryptSecret(Secret s) throws Exception
+	{
+		s.name = mCrypt.decrypt(s.name);
+		s.username = mCrypt.decrypt(s.username);
+		s.password = mCrypt.decrypt(s.password);
+	}
+	
+	
+	
 	public List getSecrets() throws Exception
 	{
 		assureReady();
-		List<Secret> list = mSQL.getSecrets();
-		for (Secret s : list) 
-		{
-			s.name = mCrypt.decrypt(s.name);
-			s.username = mCrypt.decrypt(s.username);
-			s.password = mCrypt.decrypt(s.password);
-		}
-		Collections.sort(list);
+		List<Secret> slist = mSQL.getSecrets();
+		for (Secret s : slist) 
+			decryptSecret(s);
 		
-		return list;
+		Collections.sort(slist);
+		
+		return slist;
 	}
 	
 	public void newSecret(Secret s) throws Exception
 	{
 		assureReady();
-		mSQL.newSecret(mCrypt.crypt(s.name), mCrypt.crypt(s.username), mCrypt.crypt(s.password));
+		encryptSecret(s);
+		mSQL.newSecret(s);
 	}
 	
 	public Secret getSecret(int id) throws Exception
@@ -180,15 +194,15 @@ class SQL extends SQLiteOpenHelper
 	}
 	
 	// Stores encrypted information on sql database
-	public void newSecret(String encName, String encUsername, String encPassword)
+	public void newSecret(Secret secret)
 	{
 		SQLiteDatabase db = getWritableDatabase();
 
 		ContentValues values = new ContentValues();
 		values.clear();
-		values.put("name", encName);
-		values.put("username", encUsername);
-		values.put("password", encPassword);
+		values.put("name", secret.name);
+		values.put("username", secret.username);
+		values.put("password", secret.password);
 		
 		db.insertOrThrow("secret", null, values);
 	}
