@@ -11,10 +11,10 @@ import android.content.DialogInterface;
 
 public class NewSecretActivity extends Activity
 {
-	private EditText sitenameET, siteusnameET, sitepasswordET;
-	private Button newsecretBT;
-	private SafeApp app;
-	private Database database;
+	private EditText mETsitename, mETusername, mETpassword;
+	private Button mBTnewsecret;
+	private SafeApp mApp;
+	private Database mDatabase;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -22,15 +22,15 @@ public class NewSecretActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newsecret);
-		app = (SafeApp) getApplication();
-		database = app.getDatabase();
+		mApp = (SafeApp) getApplication();
+		mDatabase = mApp.getDatabase();
 		
-		sitenameET = (EditText) findViewById(R.id.sitename);
-		siteusnameET = (EditText) findViewById(R.id.siteusname);
-		sitepasswordET = (EditText) findViewById(R.id.sitepassword);
+		mETsitename = (EditText) findViewById(R.id.sitename);
+		mETusername = (EditText) findViewById(R.id.siteusname);
+		mETpassword = (EditText) findViewById(R.id.sitepassword);
 		
-		newsecretBT = (Button) findViewById(R.id.butnewsecret);
-		newsecretBT.setOnClickListener(new View.OnClickListener() {
+		mBTnewsecret = (Button) findViewById(R.id.butnewsecret);
+		mBTnewsecret.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				newSecret();
 			}
@@ -39,9 +39,9 @@ public class NewSecretActivity extends Activity
 	
 	void newSecret()
 	{
-		String sname = sitenameET.getText().toString();
-		String usname = siteusnameET.getText().toString();
-		String pw = sitepasswordET.getText().toString();
+		String sname = mETsitename.getText().toString();
+		String usname = mETusername.getText().toString();
+		String pw = mETpassword.getText().toString();
 		if (sname.equals("") || pw.equals(""))
 		{
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
@@ -57,7 +57,7 @@ public class NewSecretActivity extends Activity
 			try
 			{
 				Secret s = new Secret(0,sname,usname,pw);
-				database.newSecret(s);
+				mDatabase.newSecret(s);
 				finish();
 			} catch (Exception e) { }
 		}

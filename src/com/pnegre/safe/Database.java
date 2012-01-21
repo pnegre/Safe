@@ -43,13 +43,13 @@ class DatabaseException extends Exception {}
 
 interface Database
 {
-	void init(String password);
-	void destroy();
+	void    init(String password);
+	void    destroy();
 	boolean ready();
-	List getSecrets() throws Exception;
-	void newSecret(Secret s) throws Exception;
-	Secret getSecret(int id) throws Exception;
-	void deleteSecret(int id) throws Exception;
+	List    getSecrets() throws Exception;
+	void    newSecret(Secret s) throws Exception;
+	Secret  getSecret(int id) throws Exception;
+	void    deleteSecret(int id) throws Exception;
 }
 
 
@@ -65,7 +65,7 @@ class DatabaseImp implements Database
 	}
 	
 	// Make sure that all is ready to go
-	void assureReady() throws DatabaseException
+	private void assureReady() throws Exception
 	{
 		if (mIsReady == false) throw new DatabaseException();
 	}
@@ -115,7 +115,6 @@ class DatabaseImp implements Database
 		s.username = mCrypt.decrypt(s.username);
 		s.password = mCrypt.decrypt(s.password);
 	}
-	
 	
 	
 	public List getSecrets() throws Exception
