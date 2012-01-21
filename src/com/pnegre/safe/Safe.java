@@ -21,39 +21,33 @@ import android.content.Intent;
 
 public class Safe extends ListActivity
 {
-	private SafeApp app;
-	private Database database;
-	private boolean showingDialog = false;
+	private SafeApp  mApp;
+	private Database mDatabase;
+	private boolean  mShowingDialog = false;
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		app = (SafeApp) getApplication();
-		database = app.getDatabase();
-	}
-	
-	@Override
-	public void onStop()
-	{
-		super.onStop();
+		mApp = (SafeApp) getApplication();
+		mDatabase = mApp.getDatabase();
 	}
 	
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
-		database.destroy();
+		mDatabase.destroy();
 	}
 	
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-		if (showingDialog) return;
+		if (mShowingDialog) return;
 		
-		if (database.ready() == false)
+		if (mDatabase.ready() == false)
 			showMasterPwDialog();
 		else
 			setAdapter();
@@ -76,7 +70,7 @@ public class Safe extends ListActivity
 		switch (item.getItemId()) 
 		{
 		case R.id.masterpw:
-			if (!database.ready())
+			if (!mDatabase.ready())
 				showMasterPwDialog();
 			return true;
 
@@ -89,59 +83,6 @@ public class Safe extends ListActivity
 		}
 	}
 	
-	void showMasterPwDialog()
-	{
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
-		alert.setTitle("Password");
-		// Set an EditText view to get user input   
-		final EditText input = new EditText(this);
-		input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
-
-		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String pw = input.getText().toString();
-				database.init(pw);
-				if (database.ready()) {
-					setAdapter();
-					showingDialog = false;
-				}
-			}
-		});
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
-			public void onClick(DialogInterface dialog, int whichButton) {  
-				showingDialog = false;
-			}
-		});
- 
-		alert.setView(input);
-		alert.show();
-		showingDialog = true;
-	}
-
-	void setAdapter()
-	{
-		try
-		{
-			List<Secret> secrets = database.getSecrets();
-			Secret[] secretsArray = new Secret[secrets.size()];
-			secrets.toArray(secretsArray);
-			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
-			setListAdapter(adapter);
-		}
-		catch (Exception e) 
-		{
-			Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (Safe class)"); 
-		}
-	}
-	
-	void newSecret()
-	{
-		if (!database.ready()) return;
-		
-		Intent i = new Intent(this, NewSecretActivity.class);
-		startActivity(i);
-	}
-
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) 
 	{
@@ -153,6 +94,57 @@ public class Safe extends ListActivity
 	}
 	
 	
+	private void showMasterPwDialog()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+		alert.setTitle("Password");
+		// Set an EditText view to get user input   
+		final EditText input = new EditText(this);
+		input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
 
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String pw = input.getText().toString();
+				mDatabase.init(pw);
+				if (mDatabase.ready()) {
+					setAdapter();
+					mShowingDialog = false;
+				}
+			}
+		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {  
+			public void onClick(DialogInterface dialog, int whichButton) {  
+				mShowingDialog = false;
+			}
+		});
+ 
+		alert.setView(input);
+		alert.show();
+		mShowingDialog = true;
+	}
+
+	private void setAdapter()
+	{
+		try
+		{
+			List<Secret> secrets = mDatabase.getSecrets();
+			Secret[] secretsArray = new Secret[secrets.size()];
+			secrets.toArray(secretsArray);
+			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
+			setListAdapter(adapter);
+		}
+		catch (Exception e) 
+		{
+			Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (Safe class)"); 
+		}
+	}
+	
+	private void newSecret()
+	{
+		if (!mDatabase.ready()) return;
+		
+		Intent i = new Intent(this, NewSecretActivity.class);
+		startActivity(i);
+	}
 
 }
