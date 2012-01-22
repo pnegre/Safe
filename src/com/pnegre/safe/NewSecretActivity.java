@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.widget.EditText;
 import android.widget.Button;
 import android.view.View;
+import android.util.Log;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -47,8 +48,7 @@ public class NewSecretActivity extends Activity
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
 			alert.setTitle("No Blanks!");
 			alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
+				public void onClick(DialogInterface dialog, int whichButton) { }
 			});
 			alert.show();
 		}
@@ -59,7 +59,11 @@ public class NewSecretActivity extends Activity
 				Secret s = new Secret(0,sname,usname,pw);
 				mDatabase.newSecret(s);
 				finish();
-			} catch (Exception e) { }
+			} 
+			catch (Exception e) 
+			{
+				Log.d(SafeApp.LOG_TAG, "Error when inserting new secret"); 
+			}
 		}
 	}
 }
