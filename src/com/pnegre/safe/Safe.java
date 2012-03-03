@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.view.View;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.util.Log;
 
 import android.widget.EditText;
@@ -32,6 +34,10 @@ public class Safe extends ListActivity
 		super.onCreate(savedInstanceState);
 		mApp = (SafeApp) getApplication();
 		mDatabase = mApp.getDatabase();
+		ListView lv = getListView();
+		LayoutInflater inflater = getLayoutInflater();
+		ViewGroup header = (ViewGroup)inflater.inflate(R.layout.header, lv, false);
+		lv.addHeaderView(header, null, false);
 	}
 	
 	@Override
