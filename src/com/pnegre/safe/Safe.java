@@ -64,9 +64,7 @@ public class Safe extends ListActivity
 		super.onResume();
 		if (mShowingDialog) return;
 		
-		if (mDatabase.ready() == false)
-			; //showMasterPwDialog();
-		else
+		if (mDatabase.ready() == true)
 			setAdapter();
 	}
 	
@@ -86,9 +84,12 @@ public class Safe extends ListActivity
 	{
 		switch (item.getItemId()) 
 		{
-		case R.id.masterpw:
+		case R.id.changepw:
 			if (!mDatabase.ready())
-				showMasterPwDialog();
+				return true;
+			
+			// TODO: aquí codi per canviar la master password
+			
 			return true;
 
 		case R.id.newsecret:
