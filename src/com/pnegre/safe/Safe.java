@@ -23,9 +23,10 @@ import android.content.Intent;
 
 public class Safe extends ListActivity
 {
-	private SafeApp  mApp;
-	private Database mDatabase;
-	private boolean  mShowingDialog = false;
+	private SafeApp   mApp;
+	private Database  mDatabase;
+	private boolean   mShowingDialog = false;
+	private ViewGroup mHeader;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -36,8 +37,9 @@ public class Safe extends ListActivity
 		mDatabase = mApp.getDatabase();
 		ListView lv = getListView();
 		LayoutInflater inflater = getLayoutInflater();
-		ViewGroup header = (ViewGroup)inflater.inflate(R.layout.header, lv, false);
-		lv.addHeaderView(header, null, false);
+		mHeader = (ViewGroup)inflater.inflate(R.layout.header, lv, false);
+		lv.addHeaderView(mHeader, null, false);
+		setListAdapter(null);
 	}
 	
 	@Override
@@ -54,7 +56,7 @@ public class Safe extends ListActivity
 		if (mShowingDialog) return;
 		
 		if (mDatabase.ready() == false)
-			showMasterPwDialog();
+			; //showMasterPwDialog();
 		else
 			setAdapter();
 	}
@@ -138,6 +140,9 @@ public class Safe extends ListActivity
 			secrets.toArray(secretsArray);
 			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
 			setListAdapter(adapter);
+			ListView lv = getListView();
+			lv.removeHeaderView(mHeader);
+			
 		}
 		catch (Exception e) 
 		{
