@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.content.Intent;
+import android.widget.Button;
 
 
 public class Safe extends ListActivity
@@ -27,6 +28,7 @@ public class Safe extends ListActivity
 	private Database  mDatabase;
 	private boolean   mShowingDialog = false;
 	private ViewGroup mHeader;
+	private Button    mBTmasterSecret;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -40,6 +42,13 @@ public class Safe extends ListActivity
 		mHeader = (ViewGroup)inflater.inflate(R.layout.header, lv, false);
 		lv.addHeaderView(mHeader, null, false);
 		setListAdapter(null);
+		
+		mBTmasterSecret = (Button) findViewById(R.id.butmastersecret);
+		mBTmasterSecret.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				showMasterPwDialog();
+			}
+		});
 	}
 	
 	@Override
