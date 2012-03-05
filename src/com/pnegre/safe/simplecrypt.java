@@ -1,28 +1,45 @@
 package com.pnegre.safe;
 
-import java.security.Key;
-import java.security.SecureRandom;
+import java.io.*;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.KeyGenerator;
+import javax.crypto.CipherInputStream;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.MessageDigest;
 
 
 class SimpleCrypt
 {
-	private Key    mSecretKey;
-	private Cipher mCipher;
+	private SecretKeySpec mSecretKey;
+	Cipher mCipher;
+	byte[] buf = new byte[1024];
 	
 	SimpleCrypt(String masterPw) throws Exception
 	{
-		KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-		sr.setSeed(masterPw.getBytes());
-		keyGenerator.init(128,sr);
-		mSecretKey = keyGenerator.generateKey();
+		byte[] key = get256Key(masterPw.getBytes());
+		mSecretKey = new SecretKeySpec(key,"AES");
 		mCipher = Cipher.getInstance("AES");
 	}
 	
+	
+	// Takes an initial byte array and returns a 256bit key (32 bytes)
+	// Applies a MD5 digest to the initialKey provided by the user
+	private byte[] get256Key(byte[] initialKey) throws java.security.NoSuchAlgorithmException
+	{
+		byte[] result = new byte[32];
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(initialKey);
+		byte[] digest = md.digest();
+		int i=0,j=0;
+		while (i<32)
+		{
+			result[i++] = digest[j];
+			j = (j + 1) % digest.length;
+		}
+		return result;
+	}
+
 	String crypt(String clear) throws Exception
 	{
 		mCipher.init(Cipher.ENCRYPT_MODE, mSecretKey);
