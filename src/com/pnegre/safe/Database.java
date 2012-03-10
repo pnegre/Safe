@@ -81,41 +81,54 @@ class DatabaseImp implements Database
 		mIsReady = false;
 	}
 	
-	// Create the cipher object
+	// Create the SimpleCrypt object
 	// Make sure that the password is correct (comparing with the stored hash in the database)
 	public void init(String password)
 	{
 		try
 		{
-			mCrypt = new SimpleCrypt(password);
-			String pw = mSQL.getEncryptedPassword();
-			if (pw == null)
-				mSQL.storeEncryptedPassword(mCrypt.crypt(password));
+			mCrypt = new SimpleCrypt(password.getBytes());
+			String storedPw = mSQL.getEncryptedPassword();
+			String userPw = Base64.encodeBytes(mCrypt.crypt(password.getBytes()));
+			if (storedPw == null)
+				mSQL.storeEncryptedPassword(userPw);
 			else
-				if (! mCrypt.crypt(password).equals(pw)) throw new DatabaseException();
+				if (! userPw.equals(storedPw)) throw new DatabaseException();
 			
 			mIsReady = true;
 		}
 		catch (Exception e) 
 		{
 			Log.d(SafeApp.LOG_TAG, "Problem initializing encrypted database");
+			e.printStackTrace();
 		}
 	}
 	
 	private void encryptSecret(Secret s) throws Exception
 	{
-		s.name = mCrypt.crypt(s.name);
-		s.username = mCrypt.crypt(s.username);
-		s.password = mCrypt.crypt(s.password);
+		s.name = cryptString(s.name);
+		s.username = cryptString(s.username);
+		s.password = cryptString(s.password);
 	}
 	
 	private void decryptSecret(Secret s) throws Exception
 	{
-		s.name = mCrypt.decrypt(s.name);
-		s.username = mCrypt.decrypt(s.username);
-		s.password = mCrypt.decrypt(s.password);
+		s.name = decryptString(s.name);
+		s.username = decryptString(s.username);
+		s.password = decryptString(s.password);
 	}
 	
+	private String cryptString(String clear) throws Exception
+	{
+		return Base64.encodeBytes(mCrypt.crypt(clear.getBytes()));
+	}
+	
+	private String decryptString(String crypted) throws Exception
+	{
+		byte[] raw = Base64.decode(crypted.getBytes());
+		String clear = new String(mCrypt.decrypt(raw));
+		return clear;
+	}
 	
 	public List getSecrets() throws Exception
 	{

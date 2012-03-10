@@ -1,57 +1,126 @@
 package com.pnegre.safe;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.CipherInputStream;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
+import java.security.Key;
+import java.security.spec.KeySpec;
+import javax.crypto.spec.SecretKeySpec;
+
+
+
+/*
+// Builds a 128bit AES-compatible key from a string or a bunch of raw bytes
+class Key128AES implements Key,KeySpec
+{
+	private byte[] realKey;
+	
+	// Constructors
+	Key128AES(byte[] rawBytes) throws Exception { deriveRealKey(rawBytes); }
+	Key128AES(String _string)  throws Exception { deriveRealKey(_string.getBytes()); }
+	
+	private void deriveRealKey(byte[] initialKey) throws Exception
+	{
+		realKey = new byte[16];
+		MessageDigest md = MessageDigest.getInstance("SHA-512");
+		md.update(initialKey);
+		byte[] digest = md.digest();
+		int i=0,j=0;
+		while (i<16)
+		{
+			realKey[i++] = digest[j];
+			j = (j + 1) % digest.length;
+		}
+	}
+	
+	public String getAlgorithm() { return "AES";   }
+	public String getFormat()    { return "RAW";   }
+	public byte[] getEncoded()   { return realKey; }
+}
+*/
 
 
 class SimpleCrypt
 {
-	private SecretKeySpec mSecretKey;
-	Cipher mCipher;
-	byte[] buf = new byte[1024];
+	private Key secretKey;
+	private Cipher theCipher;
+	private byte[] buf = new byte[1024];
 	
-	SimpleCrypt(String masterPw) throws Exception
+	SimpleCrypt(byte[] masterPw) throws Exception
 	{
-		byte[] key = get256Key(masterPw.getBytes());
-		mSecretKey = new SecretKeySpec(key,"AES");
-		mCipher = Cipher.getInstance("AES");
+		secretKey = buildKey256(masterPw);
+		theCipher = Cipher.getInstance("AES");
 	}
 	
-	
-	// Takes an initial byte array and returns a 256bit key (32 bytes)
-	// Applies a MD5 digest to the initialKey provided by the user
-	private byte[] get256Key(byte[] initialKey) throws java.security.NoSuchAlgorithmException
+	private SecretKeySpec buildKey256(byte[] initialKey) throws Exception
 	{
-		byte[] result = new byte[32];
-		MessageDigest md = MessageDigest.getInstance("MD5");
+		byte[] realKey = new byte[32];
+		MessageDigest md = MessageDigest.getInstance("SHA-512");
 		md.update(initialKey);
 		byte[] digest = md.digest();
 		int i=0,j=0;
 		while (i<32)
 		{
-			result[i++] = digest[j];
+			realKey[i++] = digest[j];
 			j = (j + 1) % digest.length;
 		}
-		return result;
+		return new SecretKeySpec(realKey,"AES");
 	}
 
-	String crypt(String clear) throws Exception
+	byte[] crypt(byte[] clear) throws Exception
 	{
-		mCipher.init(Cipher.ENCRYPT_MODE, mSecretKey);
-		byte[] result = mCipher.doFinal(clear.getBytes());
-		return Base64.encodeBytes(result);
+		theCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		byte[] result = theCipher.doFinal(clear);
+		return result;
 	}
 	
-	String decrypt(String encrypted) throws Exception
+	byte[] decrypt(byte[] crypted) throws Exception
 	{
-		byte[] d = Base64.decode(encrypted.getBytes());
-		mCipher.init(Cipher.DECRYPT_MODE, mSecretKey);
-		byte[] result = mCipher.doFinal(d);
-		return new String(result);
+		theCipher.init(Cipher.DECRYPT_MODE, secretKey);
+		byte[] result = theCipher.doFinal(crypted);
+		return result;
+	}
+	
+	public void cryptFile(InputStream in, OutputStream out) throws Exception
+	{
+		// Bytes written to out will be encrypted
+		theCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		out = new CipherOutputStream(out, theCipher);
+
+		process(in,out);
+		out.close();
+	}
+
+	public void decryptFile(InputStream in, OutputStream out) throws Exception 
+	{
+		// Bytes read from in will be decrypted
+		theCipher.init(Cipher.DECRYPT_MODE, secretKey);
+		in = new CipherInputStream(in, theCipher);
+
+		process(in,out);
+		out.close();
+	}
+	
+	public void cryptRawData(byte[] data, OutputStream out) throws Exception
+	{
+		theCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		out = new CipherOutputStream(out, theCipher);
+		
+		process(in,out);
+		out.close();
+	}
+	
+	private void process(InputStream in, OutputStream out) throws Exception
+	{
+		int n;
+		while ((n = in.read(buf)) >= 0) 
+			out.write(buf, 0, n);
 	}
 }
+
