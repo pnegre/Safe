@@ -7,6 +7,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.security.MessageDigest;
+
 import java.util.*;
 
 
@@ -87,14 +89,17 @@ class DatabaseImp implements Database
 	{
 		try
 		{
-			mCrypt = new SimpleCrypt(password.getBytes());
+			MessageDigest md = MessageDigest.getInstance("SHA-512");
+			md.update(password.getBytes());
+			String userPw = Base64.encodeBytes(md.digest());
 			String storedPw = mSQL.getEncryptedPassword();
-			String userPw = Base64.encodeBytes(mCrypt.crypt(password.getBytes()));
+			
 			if (storedPw == null)
 				mSQL.storeEncryptedPassword(userPw);
 			else
 				if (! userPw.equals(storedPw)) throw new DatabaseException();
 			
+			mCrypt = new SimpleCrypt(password.getBytes());
 			mIsReady = true;
 		}
 		catch (Exception e) 
@@ -173,7 +178,7 @@ class DatabaseImp implements Database
 class SQL extends SQLiteOpenHelper
 {
 	static final String DB_NAME = "safe.db";
-	static final int DB_VERSION = 2;
+	static final int DB_VERSION = 3;
 
 	// Constructor
 	public SQL(Context context)
@@ -186,7 +191,7 @@ class SQL extends SQLiteOpenHelper
 	{
 		String sql = "create table secret ( id integer primary key autoincrement, name text, username text, password text )";
 		db.execSQL(sql);
-		sql = "create table setup ( cryptedpassword text )";
+		sql = "create table user ( username text, cryptedpassword text )";
 		db.execSQL(sql);
 	}
 
@@ -194,7 +199,7 @@ class SQL extends SQLiteOpenHelper
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
 		db.execSQL("drop table if exists secret");
-		db.execSQL("drop table if exists setup");
+		db.execSQL("drop table if exists user");
 		onCreate(db);
 	}
 
@@ -202,7 +207,7 @@ class SQL extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = getWritableDatabase();
 		db.execSQL("delete from secret");
-		db.execSQL("delete from setup");
+		db.execSQL("delete from user");
 	}
 	
 	// Stores encrypted information on sql database
@@ -247,22 +252,24 @@ class SQL extends SQLiteOpenHelper
 	public String getEncryptedPassword()
 	{
 		SQLiteDatabase db = getReadableDatabase();
-		Cursor cs = db.query("setup", null, null, null, null, null, null);
+		Cursor cs = db.query("user", new String[] { "username", "cryptedpassword" },
+			"username='user'", null, null, null, null);
 		cs.moveToFirst();
 		if (cs.isAfterLast() == true) return null;
 		
-		return cs.getString(0);
+		return cs.getString(1);
 	}
 	
 	public void storeEncryptedPassword(String encryptedPassword)
 	{
 		SQLiteDatabase db = getReadableDatabase();
-		db.execSQL("delete from setup");
+		db.execSQL("delete from user");
 		
 		ContentValues values = new ContentValues();
 		values.clear();
+		values.put("username","user");
 		values.put("cryptedpassword", encryptedPassword);
-		db.insertOrThrow("setup", null, values);
+		db.insertOrThrow("user", null, values);
 	}
 }
 
