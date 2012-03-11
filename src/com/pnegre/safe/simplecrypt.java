@@ -11,27 +11,28 @@ import java.security.MessageDigest;
 import java.security.Key;
 import java.security.spec.KeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.SecretKey;
 
 
 
-/*
-// Builds a 128bit AES-compatible key from a string or a bunch of raw bytes
-class Key128AES implements Key,KeySpec
+
+// Builds a 256bit AES-compatible key from a string or a bunch of raw bytes
+class Key256AES implements Key, KeySpec, SecretKey
 {
 	private byte[] realKey;
 	
 	// Constructors
-	Key128AES(byte[] rawBytes) throws Exception { deriveRealKey(rawBytes); }
-	Key128AES(String _string)  throws Exception { deriveRealKey(_string.getBytes()); }
+	Key256AES(byte[] rawBytes) throws Exception { deriveRealKey(rawBytes); }
+	Key256AES(String _string)  throws Exception { deriveRealKey(_string.getBytes()); }
 	
 	private void deriveRealKey(byte[] initialKey) throws Exception
 	{
-		realKey = new byte[16];
+		realKey = new byte[32];
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
 		md.update(initialKey);
 		byte[] digest = md.digest();
 		int i=0,j=0;
-		while (i<16)
+		while (i<32)
 		{
 			realKey[i++] = digest[j];
 			j = (j + 1) % digest.length;
@@ -42,7 +43,7 @@ class Key128AES implements Key,KeySpec
 	public String getFormat()    { return "RAW";   }
 	public byte[] getEncoded()   { return realKey; }
 }
-*/
+
 
 
 class SimpleCrypt
@@ -53,23 +54,8 @@ class SimpleCrypt
 	
 	SimpleCrypt(byte[] masterPw) throws Exception
 	{
-		secretKey = buildKey256(masterPw);
+		secretKey = new Key256AES(masterPw);
 		theCipher = Cipher.getInstance("AES");
-	}
-	
-	private SecretKeySpec buildKey256(byte[] initialKey) throws Exception
-	{
-		byte[] realKey = new byte[32];
-		MessageDigest md = MessageDigest.getInstance("SHA-512");
-		md.update(initialKey);
-		byte[] digest = md.digest();
-		int i=0,j=0;
-		while (i<32)
-		{
-			realKey[i++] = digest[j];
-			j = (j + 1) % digest.length;
-		}
-		return new SecretKeySpec(realKey,"AES");
 	}
 
 	byte[] crypt(byte[] clear) throws Exception
