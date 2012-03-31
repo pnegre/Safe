@@ -11,6 +11,8 @@ import java.security.MessageDigest;
 
 import java.util.*;
 
+import net.iharder.base64.Base64;
+
 
 class Secret implements Comparable
 {

@@ -1,4 +1,4 @@
-package com.pnegre.safe;
+package net.iharder.base64;
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
