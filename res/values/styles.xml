@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Theme.SafeTheme" parent="android:style/Theme.Holo">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <!-- style for the action bar backgrounds -->
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">#333333</item>
+    </style>
+
+
+
 	<style name="MyFont" parent="@android:style/TextAppearance.Medium">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textColor">#FFFFFF</item>
 		<item name="android:typeface">sans</item>
-		<item name="android:textSize">22sp</item>
+		<item name="android:textSize">18sp</item>
 	</style>
 	
 	<style name="MyFont.monospace">
