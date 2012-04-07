@@ -93,7 +93,7 @@ class SimpleCrypt {
 
     public void cryptRawData(byte[] data, OutputStream out) throws Exception {
         theCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        InputStream in = new ByteArrayInputStream(data);
         out = new CipherOutputStream(out, theCipher);
 
         process(in, out);
