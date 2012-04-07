@@ -11,8 +11,12 @@ public class SafeApp extends Application
 	
 	public void onCreate()
 	{
-		mDatabase = new DatabaseImp(this);
+		mDatabase = null;
 	}
+
+    void setDatabase(Database db) {
+        mDatabase = db;
+    }
 	
 	Database getDatabase()
 	{

@@ -1,25 +1,18 @@
 package com.pnegre.safe;
 
-import java.util.List;
-
-import android.app.ListActivity;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
-import android.view.View;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.util.Log;
-
-import android.widget.EditText;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuInflater;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.*;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import java.util.List;
 
 
 public class SafeDefaultActivity extends ListActivity
@@ -63,9 +56,10 @@ public class SafeDefaultActivity extends ListActivity
 	{
 		super.onResume();
 		if (mShowingDialog) return;
+        if (mDatabase == null) return;
 		
 		if (mDatabase.ready() == true)
-			setAdapter();
+			setAdapter(mDatabase);
 	}
 	
 	// Inflate res/menu/mainmenu.xml
@@ -123,10 +117,13 @@ public class SafeDefaultActivity extends ListActivity
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {  
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String pw = input.getText().toString();
-				mDatabase.init(pw);
-				if (mDatabase.ready()) {
-					setAdapter();
+                Database db = new DatabaseImp(SafeDefaultActivity.this);
+				db.init(pw);
+				if (db.ready()) {
+					setAdapter(db);
 					mShowingDialog = false;
+                    mApp.setDatabase(db);
+                    mDatabase = db;
 				}
 			}
 		});
@@ -141,11 +138,11 @@ public class SafeDefaultActivity extends ListActivity
 		mShowingDialog = true;
 	}
 
-	private void setAdapter()
+	private void setAdapter(Database db)
 	{
 		try
 		{
-			List<Secret> secrets = mDatabase.getSecrets();
+			List<Secret> secrets = db.getSecrets();
 			Secret[] secretsArray = new Secret[secrets.size()];
 			secrets.toArray(secretsArray);
 			ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
