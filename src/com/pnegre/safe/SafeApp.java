@@ -6,7 +6,7 @@ public class SafeApp extends Application
 {
 	private Database mDatabase;
 	
-	public static final String LOG_TAG = "Safe";
+	public static final String LOG_TAG = "SafeDefaultActivity";
 	public static final String PASS_HIDE_STRING = "********";
 	
 	public void onCreate()

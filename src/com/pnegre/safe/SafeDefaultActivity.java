@@ -22,7 +22,7 @@ import android.content.Intent;
 import android.widget.Button;
 
 
-public class Safe extends ListActivity
+public class SafeDefaultActivity extends ListActivity
 {
 	private SafeApp   mApp;
 	private Database  mDatabase;
@@ -156,7 +156,7 @@ public class Safe extends ListActivity
 		}
 		catch (Exception e) 
 		{
-			Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (Safe class)"); 
+			Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (SafeDefaultActivity class)");
 		}
 	}
 	
