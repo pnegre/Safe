@@ -45,15 +45,10 @@ class DatabaseException extends Exception {
 interface Database {
 
     void destroy();
-
     boolean ready();
-
     List getSecrets() throws Exception;
-
     void newSecret(Secret s) throws Exception;
-
     Secret getSecret(int id) throws Exception;
-
     void deleteSecret(int id) throws Exception;
 
 }
@@ -72,7 +67,7 @@ class EncryptedDatabase implements Database {
     EncryptedDatabase(Database db, Context ctx, String password) {
         try {
             SQL2 sql2 = new SQL2(ctx);
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
             String userPw = Base64.encodeBytes(md.digest());
             String storedPw = sql2.getPassword();
