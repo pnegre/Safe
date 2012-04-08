@@ -5,13 +5,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class NewSecretActivity extends Activity {
     private EditText mETsitename, mETusername, mETpassword;
-    private Button mBTnewsecret;
     private SafeApp mApp;
     private Database mDatabase;
 
@@ -28,13 +30,6 @@ public class NewSecretActivity extends Activity {
         mETsitename = (EditText) findViewById(R.id.sitename);
         mETusername = (EditText) findViewById(R.id.siteusname);
         mETpassword = (EditText) findViewById(R.id.sitepassword);
-
-        mBTnewsecret = (Button) findViewById(R.id.butnewsecret);
-        mBTnewsecret.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                newSecret();
-            }
-        });
     }
 
     void newSecret() {
@@ -58,5 +53,25 @@ public class NewSecretActivity extends Activity {
                 Log.d(SafeApp.LOG_TAG, "Error when inserting new secret");
             }
         }
+    }
+
+
+    // Inflate res/menu/menuactivity.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.newsecretmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.secretsave:
+                newSecret();
+                break;
+        }
+
+        return true;
     }
 }

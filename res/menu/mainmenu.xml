@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mainmenu">
 
     <item android:id="@+id/changepw"
           android:showAsAction="ifRoom"
-          android:title="Change password" />
+          android:title="Change password"
+          android:visible="false" />
 
     <item android:id="@+id/newsecret"
           android:showAsAction="ifRoom"
-          android:title="New Secret" />
+          android:title="New Secret"
+          android:visible="false" />
 
 </menu>

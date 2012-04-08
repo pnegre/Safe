@@ -1,5 +1,6 @@
 package com.pnegre.safe;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -47,6 +48,7 @@ public class SafeDefaultActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mApp.showMenu = false;
         if (mDatabase != null)
             mDatabase.destroy();
     }
@@ -66,6 +68,12 @@ public class SafeDefaultActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainmenu, menu);
+
+        if (mApp.showMenu) {
+            MenuItem mi = menu.findItem(R.id.newsecret);
+            mi.setVisible(true);
+        }
+
         return true;
     }
 
@@ -117,6 +125,9 @@ public class SafeDefaultActivity extends ListActivity {
                     mShowingDialog = false;
                     mApp.setDatabase(db);
                     mDatabase = db;
+
+                    mApp.showMenu = true;
+                    invalidateOptionsMenu();
                 }
             }
         });
