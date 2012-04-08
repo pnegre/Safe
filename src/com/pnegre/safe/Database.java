@@ -59,10 +59,9 @@ interface Database {
  */
 class EncryptedDatabase implements Database {
 
-    private String masterPassword;
-    SimpleCrypt mCrypt;
-    boolean mIsReady;
-    Database cleanDatabase;
+    private SimpleCrypt mCrypt;
+    private boolean mIsReady;
+    private Database cleanDatabase;
 
     EncryptedDatabase(Database db, Context ctx, String password) {
         try {
@@ -146,8 +145,7 @@ class EncryptedDatabase implements Database {
 
     private String decryptString(String crypted) throws Exception {
         byte[] raw = Base64.decode(crypted.getBytes());
-        String clear = new String(mCrypt.decrypt(raw));
-        return clear;
+        return new String(mCrypt.decrypt(raw));
     }
 
 
@@ -157,7 +155,7 @@ class EncryptedDatabase implements Database {
 // SQLite android database
 class SQLDatabase extends SQLiteOpenHelper implements Database {
     static final String DB_NAME = "safe.db";
-    static final int DB_VERSION = 3;
+    static final int DB_VERSION = 4;
 
     // Constructor
     public SQLDatabase(Context context) {
@@ -168,21 +166,16 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
     public void onCreate(SQLiteDatabase db) {
         String sql = "create table secret ( id integer primary key autoincrement, name text, username text, password text )";
         db.execSQL(sql);
-        sql = "create table user ( username text, cryptedpassword text )";
-        db.execSQL(sql);
     }
 
     // Called whenever newVersion != oldVersion
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists secret");
-        db.execSQL("drop table if exists user");
-        onCreate(db);
     }
 
     public void deleteAllData() {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("delete from secret");
-        db.execSQL("delete from user");
     }
 
     // Stores encrypted information on sql database
@@ -249,7 +242,7 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
 class SQL2 extends SQLiteOpenHelper {
 
     static final String DB_NAME = "safe_secret.db";
-    static final int DB_VERSION = 3;
+    static final int DB_VERSION = 4;
 
     // Constructor
     public SQL2(Context context) {
