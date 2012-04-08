@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,12 +53,6 @@ public class ShowSecretActivity extends Activity {
                 }
             });
 
-            mButtonDel = (Button) findViewById(R.id.butdelsecret);
-            mButtonDel.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    showDeleteDialog();
-                }
-            });
         } catch (Exception e) {
             Log.d(SafeApp.LOG_TAG, "Exception in ShowSecretActivity.onCreate");
         }
@@ -99,4 +96,26 @@ public class ShowSecretActivity extends Activity {
 
         mShowPassword = !mShowPassword;
     }
+
+    // Inflate res/menu/menuactivity.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menuactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.removesecret:
+                showDeleteDialog();
+                break;
+        }
+
+        return true;
+    }
+
+
+
 }
