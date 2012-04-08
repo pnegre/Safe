@@ -2,9 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/changepw"
+          android:showAsAction="ifRoom"
           android:title="Change password" />
 
     <item android:id="@+id/newsecret"
+          android:showAsAction="ifRoom"
           android:title="New Secret" />
 
 </menu>
