@@ -2,6 +2,11 @@ package com.pnegre.safe;
 
 import android.app.Application;
 
+
+// TODO: Exportar XML+ZIP la base de dades encriptada
+// TODO: Implementar canvi de password dins l'aplicació
+
+
 public class SafeApp extends Application {
     private Database mDatabase;
     boolean showMenu = false;
