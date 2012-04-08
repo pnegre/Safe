@@ -9,6 +9,7 @@
     <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
         <!--<item name="android:background">#333333</item>-->
         <item name="android:displayOptions">showHome</item>
+        <item name="android:layout_marginBottom">8dip</item>
     </style>
 
 
@@ -18,7 +19,7 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:textColor">#FFFFFF</item>
 		<item name="android:typeface">sans</item>
-		<item name="android:textSize">18sp</item>
+		<item name="android:textSize">15sp</item>
 	</style>
 	
 	<style name="MyFont.monospace">
@@ -28,10 +29,10 @@
 	</style>
 	
 	<style name="Separator">
-		<item name="android:background">#CCCCCC</item> 
+		<item name="android:background">#444444</item>
 		<item name="android:layout_centerVertical">true</item>
 		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">2dip</item>
+		<item name="android:layout_height">1dip</item>
 		<item name="android:layout_marginBottom">15dip</item>
 		<item name="android:layout_marginTop">15dip</item>
 		<item name="android:layout_alignParentTop">true</item>
