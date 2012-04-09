@@ -27,6 +27,13 @@ class Secret implements Comparable {
         this.id = id;
     }
 
+    Secret(Secret s) {
+        name = s.name;
+        username = s.username;
+        password = s.password;
+        id = s.id;
+    }
+
     public String toString() {
         return name;
     }
@@ -50,6 +57,7 @@ interface Database {
     void newSecret(Secret s) throws Exception;
     Secret getSecret(int id) throws Exception;
     void deleteSecret(int id) throws Exception;
+    void updateSecret(Secret s) throws Exception;
 
 }
 
@@ -110,8 +118,9 @@ class EncryptedDatabase implements Database {
 
     @Override
     public void newSecret(Secret s) throws Exception {
-        encryptSecret(s);
-        cleanDatabase.newSecret(s);
+        Secret ss = new Secret(s);
+        encryptSecret(ss);
+        cleanDatabase.newSecret(ss);
     }
 
     @Override
@@ -124,6 +133,13 @@ class EncryptedDatabase implements Database {
     @Override
     public void deleteSecret(int id) throws Exception {
         cleanDatabase.deleteSecret(id);
+    }
+
+    @Override
+    public void updateSecret(Secret s) throws Exception {
+        Secret ss = new Secret(s);
+        encryptSecret(ss);
+        cleanDatabase.updateSecret(ss);
     }
 
 
@@ -231,6 +247,15 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
     public void deleteSecret(int id) {
         SQLiteDatabase db = getReadableDatabase();
         db.execSQL("delete from secret where id=" + String.valueOf(id));
+    }
+
+    @Override
+    public void updateSecret(Secret s) {
+        SQLiteDatabase db = getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.clear();
+        values.put("password",s.password);
+        db.update("secret", values, "id=" + s.id, null);
     }
 
 }

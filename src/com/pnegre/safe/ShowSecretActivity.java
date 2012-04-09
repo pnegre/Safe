@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -108,12 +109,45 @@ public class ShowSecretActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.removesecret:
                 showDeleteDialog();
                 break;
-        }
 
+            case R.id.editsecret:
+                showChangePWDialog();
+                break;
+        }
         return true;
+    }
+
+
+    private void showChangePWDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("New Password");
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    mSecret.password = input.getText().toString();
+                    mDatabase.updateSecret(mSecret);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(SafeApp.LOG_TAG,"Error updating register " + mSecret.id);
+                }
+
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.setView(input);
+        alert.show();
     }
 
 
