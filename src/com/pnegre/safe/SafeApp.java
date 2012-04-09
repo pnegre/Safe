@@ -9,7 +9,7 @@ import android.app.Application;
 
 public class SafeApp extends Application {
     private Database mDatabase;
-    boolean showMenu = false;
+    private boolean showMenu = false;
 
     public static final String LOG_TAG = "SafeDefaultActivity";
     public static final String PASS_HIDE_STRING = "********";
@@ -24,5 +24,13 @@ public class SafeApp extends Application {
 
     Database getDatabase() {
         return mDatabase;
+    }
+
+    boolean menuVisible() {
+        return showMenu;
+    }
+
+    void setMenuVisibility(boolean yesno) {
+        showMenu = yesno;
     }
 }

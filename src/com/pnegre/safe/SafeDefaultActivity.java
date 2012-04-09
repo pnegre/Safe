@@ -48,7 +48,7 @@ public class SafeDefaultActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mApp.showMenu = false;
+        mApp.setMenuVisibility(false);
         if (mDatabase != null)
             mDatabase.destroy();
     }
@@ -69,7 +69,7 @@ public class SafeDefaultActivity extends ListActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainmenu, menu);
 
-        if (mApp.showMenu) {
+        if (mApp.menuVisible()) {
             MenuItem mi = menu.findItem(R.id.newsecret);
             mi.setVisible(true);
         }
@@ -84,9 +84,10 @@ public class SafeDefaultActivity extends ListActivity {
         switch (item.getItemId()) {
             case R.id.changepw:
                 if (!mDatabase.ready())
+                    // TODO: aquí codi per canviar la master password
                     return true;
 
-                // TODO: aquí codi per canviar la master password
+
 
                 return true;
 
@@ -126,7 +127,7 @@ public class SafeDefaultActivity extends ListActivity {
                     mApp.setDatabase(db);
                     mDatabase = db;
 
-                    mApp.showMenu = true;
+                    mApp.setMenuVisibility(true);
                     invalidateOptionsMenu();
                 }
             }
