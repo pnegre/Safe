@@ -241,6 +241,7 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
             result.add(s);
             cs.moveToNext();
         }
+        cs.close();
         return result;
     }
 
@@ -302,8 +303,15 @@ class SQL2 extends SQLiteOpenHelper {
         Cursor cs = db.query("user", new String[]{"username", "cryptedpassword"},
                 "username='user'", null, null, null, null);
         cs.moveToFirst();
-        if (cs.isAfterLast()) return null;
+        if (cs.isAfterLast()) {
+            cs.close();
+            db.close();
+            return null;
+        }
+        String result = cs.getString(1);
+        cs.close();
+        db.close();
 
-        return cs.getString(1);
+        return result;
     }
 }
