@@ -1,6 +1,5 @@
 package com.pnegre.safe;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -95,9 +94,19 @@ public class SafeDefaultActivity extends ListActivity {
                 newSecret();
                 return true;
 
+            case R.id.exportsecrets:
+                exportSecrets();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // Exportar secrets mitjançant un XML (segurament també encriptat)
+    private void exportSecrets() {
+        Exporter exporter = new Exporter(mDatabase);
+        exporter.export();
     }
 
     @Override
