@@ -106,7 +106,7 @@ public class SafeDefaultActivity extends ListActivity {
     // Exportar secrets mitjançant un XML (segurament també encriptat)
     private void exportSecrets() {
         Exporter exporter = new Exporter(mDatabase);
-        exporter.export();
+        exporter.export(mApp.masterPassword);
     }
 
     @Override
@@ -138,6 +138,7 @@ public class SafeDefaultActivity extends ListActivity {
 
                     mApp.setMenuVisibility(true);
                     invalidateOptionsMenu();
+                    mApp.masterPassword = pw;
                 }
             }
         });

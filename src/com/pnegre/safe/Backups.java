@@ -15,6 +15,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 class Exporter {
@@ -24,7 +25,7 @@ class Exporter {
         this.dataBase = dataBase;
     }
 
-    void export() {
+    void export(String password) {
         try {
             DocumentBuilderFactory dfb = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dfb.newDocumentBuilder();
@@ -60,14 +61,14 @@ class Exporter {
             String filename = String.format("safe.backup.crypt.%d", System.currentTimeMillis());
             Log.v(SafeApp.LOG_TAG, "Writing " + filename);
             File file = new File(dir, filename);
-            FileOutputStream fos = new FileOutputStream(file);
+            SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
+            OutputStream os = simpleCrypt.cryptedOutputStream(new FileOutputStream(file));
 
             //initialize StreamResult with File object to save to file
-            StreamResult result = new StreamResult(fos);
+            StreamResult result = new StreamResult(os);
             DOMSource source = new DOMSource(doc);
             transformer.transform(source, result);
-            fos.close();
-
+            os.close();
 
         } catch (Exception e) {
             e.printStackTrace();
