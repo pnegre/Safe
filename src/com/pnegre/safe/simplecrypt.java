@@ -78,6 +78,11 @@ class SimpleCrypt {
         return new CipherOutputStream(out,theCipher);
     }
 
+    InputStream decryptedInputStream(InputStream in) throws  Exception {
+        theCipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return new CipherInputStream(in, theCipher);
+    }
+
     public void cryptFile(InputStream in, OutputStream out) throws Exception {
         // Bytes written to out will be encrypted
         theCipher.init(Cipher.ENCRYPT_MODE, secretKey);

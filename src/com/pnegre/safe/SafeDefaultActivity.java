@@ -98,9 +98,18 @@ public class SafeDefaultActivity extends ListActivity {
                 exportSecrets();
                 return true;
 
+            case R.id.importsecrets:
+                importSecrets();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void importSecrets() {
+        Importer importer = new Importer();
+        importer.Import("/mnt/sdcard/safe/safe.backup.crypted.test",mApp.masterPassword);
     }
 
     // Exportar secrets mitjançant un XML (segurament també encriptat)

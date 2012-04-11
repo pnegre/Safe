@@ -2,20 +2,18 @@ package com.pnegre.safe;
 
 import android.os.Environment;
 import android.util.Log;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
 import java.util.List;
 
 class Exporter {
@@ -27,8 +25,7 @@ class Exporter {
 
     void export(String password) {
         try {
-            DocumentBuilderFactory dfb = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dfb.newDocumentBuilder();
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
             Document doc = db.newDocument();
             Element rootElement = doc.createElement("data");
@@ -80,4 +77,38 @@ class Exporter {
 
 class Importer {
 
+    Importer() {
+
+    }
+
+    void Import(String fileName, String password) {
+        try {
+            File file = new File(fileName);
+            SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
+            InputStream is = simpleCrypt.decryptedInputStream(new FileInputStream(file));
+
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = db.newDocument();
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.transform(new StreamSource(is), new DOMResult(doc));
+
+            NodeList nl = doc.getElementsByTagName("secret");
+            int l = nl.getLength();
+            for (int i=0; i<l; i++) {
+                Element element = (Element) nl.item(i);
+                System.out.println(element.getTagName());
+                System.out.println(element.getAttribute("sitename"));
+                System.out.println(element.getAttribute("username"));
+                System.out.println(element.getAttribute("password"));
+                System.out.println("---");
+                // Acabar...
+            }
+            System.out.println("Length " + l);
+
+            // TODO: Acabar...
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
