@@ -16,14 +16,14 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.List;
 
-class Exporter {
+class Backup {
     private Database dataBase;
 
-    Exporter(Database dataBase) {
+    Backup(Database dataBase) {
         this.dataBase = dataBase;
     }
 
-    void export(String password) {
+    void doExport(String password) {
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
@@ -71,17 +71,8 @@ class Exporter {
             e.printStackTrace();
         }
     }
-}
 
-
-
-class Importer {
-
-    Importer() {
-
-    }
-
-    void Import(String fileName, String password) {
+    void doImport(String fileName, String password) {
         try {
             File file = new File(fileName);
             SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
@@ -96,16 +87,15 @@ class Importer {
             int l = nl.getLength();
             for (int i=0; i<l; i++) {
                 Element element = (Element) nl.item(i);
-                System.out.println(element.getTagName());
-                System.out.println(element.getAttribute("sitename"));
-                System.out.println(element.getAttribute("username"));
-                System.out.println(element.getAttribute("password"));
-                System.out.println("---");
-                // Acabar...
+                Secret s = new Secret(0,
+                        element.getAttribute("sitename"),
+                        element.getAttribute("username"),
+                        element.getAttribute("password"));
+                dataBase.newSecret(s);
             }
-            System.out.println("Length " + l);
 
-            // TODO: Acabar...
+
+            // TODO: Notificar activity que ja s'ha fet la importació...
 
         } catch (Exception e) {
             e.printStackTrace();

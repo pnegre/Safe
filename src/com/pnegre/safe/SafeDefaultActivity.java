@@ -59,7 +59,7 @@ public class SafeDefaultActivity extends ListActivity {
         if (mDatabase == null) return;
 
         if (mDatabase.ready() == true)
-            setAdapter(mDatabase);
+            setAdapter();
     }
 
     // Inflate res/menu/mainmenu.xml
@@ -108,14 +108,17 @@ public class SafeDefaultActivity extends ListActivity {
     }
 
     private void importSecrets() {
-        Importer importer = new Importer();
-        importer.Import("/mnt/sdcard/safe/safe.backup.crypted.test",mApp.masterPassword);
+        Backup backup = new Backup(mDatabase);
+
+        //  TODO: implementar "file chooser" perquè l'usuari decideixi quin fitxer vol importar
+        backup.doImport("/mnt/sdcard/safe/safe.backup.crypted.test",mApp.masterPassword);
+        setAdapter();
     }
 
     // Exportar secrets mitjançant un XML (segurament també encriptat)
     private void exportSecrets() {
-        Exporter exporter = new Exporter(mDatabase);
-        exporter.export(mApp.masterPassword);
+        Backup backup = new Backup(mDatabase);
+        backup.doExport(mApp.masterPassword);
     }
 
     @Override
@@ -140,10 +143,10 @@ public class SafeDefaultActivity extends ListActivity {
                 String pw = input.getText().toString();
                 Database db = new EncryptedDatabase(new SQLDatabase(SafeDefaultActivity.this), SafeDefaultActivity.this, pw);
                 if (db.ready()) {
-                    setAdapter(db);
-                    mShowingDialog = false;
-                    mApp.setDatabase(db);
                     mDatabase = db;
+                    mApp.setDatabase(db);
+                    setAdapter();
+                    mShowingDialog = false;
 
                     mApp.setMenuVisibility(true);
                     invalidateOptionsMenu();
@@ -162,9 +165,10 @@ public class SafeDefaultActivity extends ListActivity {
         mShowingDialog = true;
     }
 
-    private void setAdapter(Database db) {
+    private void setAdapter() {
         try {
-            List<Secret> secrets = db.getSecrets();
+            if (!mDatabase.ready()) return;
+            List<Secret> secrets = mDatabase.getSecrets();
             Secret[] secretsArray = new Secret[secrets.size()];
             secrets.toArray(secretsArray);
             ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
@@ -174,6 +178,7 @@ public class SafeDefaultActivity extends ListActivity {
 
         } catch (Exception e) {
             Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (SafeDefaultActivity class)");
+            e.printStackTrace();
         }
     }
 
