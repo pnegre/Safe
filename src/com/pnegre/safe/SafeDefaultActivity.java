@@ -108,17 +108,37 @@ public class SafeDefaultActivity extends ListActivity {
     }
 
     private void importSecrets() {
-        Backup backup = new Backup(mDatabase);
+        try {
+            final Backup backup = new Backup(mDatabase);
 
-        //  TODO: implementar "file chooser" perquè l'usuari decideixi quin fitxer vol importar
-        backup.doImport("/mnt/sdcard/safe/safe.backup.crypted.test",mApp.masterPassword);
-        setAdapter();
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Choose");
+            final CharSequence[] items = backup.enumerateFiles();
+            alert.setItems(items, new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialogInterface, int item) {
+                    try {
+                        String chosen = (String) items[item];
+                        backup.doImport(chosen, mApp.masterPassword);
+                    } catch (Exception e) {}
+                    setAdapter();
+                }
+            });
+            alert.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Exportar secrets mitjançant un XML (segurament també encriptat)
     private void exportSecrets() {
-        Backup backup = new Backup(mDatabase);
-        backup.doExport(mApp.masterPassword);
+        try {
+            Backup backup = new Backup(mDatabase);
+            backup.doExport(mApp.masterPassword);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -128,6 +148,11 @@ public class SafeDefaultActivity extends ListActivity {
         Intent i = new Intent(this, ShowSecretActivity.class);
         i.putExtra("secretid", secretId);
         startActivity(i);
+    }
+
+
+    private void showSelectBackupDialog() {
+
     }
 
 
