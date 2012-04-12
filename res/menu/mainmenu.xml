@@ -14,10 +14,12 @@
 
     <item android:id="@+id/importsecrets"
           android:title="Import secrets"
-          android:visible="true" />
+          android:showAsAction="collapseActionView|withText"
+          android:visible="false" />
 
     <item android:id="@+id/exportsecrets"
           android:title="Export secrets"
-          android:visible="true" />
+          android:showAsAction="collapseActionView|withText"
+          android:visible="false" />
 
 </menu>

@@ -112,6 +112,7 @@ class Backup {
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File (sdCard.getAbsolutePath() + "/safe");
         dir.mkdirs();
+        System.out.println(dir.getAbsolutePath());
         return dir;
     }
 }

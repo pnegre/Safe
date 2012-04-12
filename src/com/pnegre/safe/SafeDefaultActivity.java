@@ -69,8 +69,9 @@ public class SafeDefaultActivity extends ListActivity {
         inflater.inflate(R.menu.mainmenu, menu);
 
         if (mApp.menuVisible()) {
-            MenuItem mi = menu.findItem(R.id.newsecret);
-            mi.setVisible(true);
+            menu.findItem(R.id.newsecret).setVisible(true);
+            menu.findItem(R.id.importsecrets).setVisible(true);
+            menu.findItem(R.id.exportsecrets).setVisible(true);
         }
 
         return true;
