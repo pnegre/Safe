@@ -14,7 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 class Backup {
     private Database dataBase;
@@ -81,15 +81,22 @@ class Backup {
 
         NodeList nl = doc.getElementsByTagName("secret");
         int l = nl.getLength();
+        Set<String> secretSet = new HashSet<String>();
+        for (Object o : dataBase.getSecrets()) {
+            Secret s = (Secret) o;
+            secretSet.add(s.name);
+        }
+
+        System.out.println(secretSet.toString());
         for (int i=0; i<l; i++) {
             Element element = (Element) nl.item(i);
             Secret s = new Secret(0,
                     element.getAttribute("sitename"),
                     element.getAttribute("username"),
                     element.getAttribute("password"));
-            dataBase.newSecret(s);
+            if (!secretSet.contains(s.name))
+                dataBase.newSecret(s);
         }
-
     }
 
     /**
