@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.*;
 
 import java.util.List;
 
@@ -135,10 +132,12 @@ public class SafeDefaultActivity extends ListActivity {
     private void exportSecrets() {
         try {
             Backup backup = new Backup(mDatabase);
-            backup.doExport(mApp.masterPassword);
+            String filename = backup.doExport(mApp.masterPassword);
+            showToast(filename + " saved.");
 
         } catch (Exception e) {
             e.printStackTrace();
+            showToast("Can't save file");
         }
     }
 
@@ -151,9 +150,8 @@ public class SafeDefaultActivity extends ListActivity {
         startActivity(i);
     }
 
-
-    private void showSelectBackupDialog() {
-
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 

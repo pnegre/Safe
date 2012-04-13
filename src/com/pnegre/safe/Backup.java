@@ -23,7 +23,8 @@ class Backup {
         this.dataBase = dataBase;
     }
 
-    void doExport(String password) throws Exception {
+    // Exporta els secrets i torna el nom del fitxer gravat
+    String doExport(String password) throws Exception {
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
@@ -65,7 +66,7 @@ class Backup {
         transformer.transform(source, result);
         os.close();
 
-
+        return filename;
     }
 
     void doImport(String filename, String password) throws Exception {
@@ -87,7 +88,6 @@ class Backup {
             secretSet.add(s.name);
         }
 
-        System.out.println(secretSet.toString());
         for (int i=0; i<l; i++) {
             Element element = (Element) nl.item(i);
             Secret s = new Secret(0,
