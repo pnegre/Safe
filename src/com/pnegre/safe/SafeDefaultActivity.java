@@ -14,7 +14,6 @@ import java.util.List;
 
 public class SafeDefaultActivity extends ListActivity {
     private SafeApp mApp;
-    private Database mDatabase;
     private boolean mShowingDialog = false;
     private ViewGroup mHeader;
     private Button mBTmasterSecret;
@@ -26,7 +25,6 @@ public class SafeDefaultActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mApp = (SafeApp) getApplication();
-        mDatabase = mApp.getDatabase();
         ListView lv = getListView();
         LayoutInflater inflater = getLayoutInflater();
         mHeader = (ViewGroup) inflater.inflate(R.layout.header, lv, false);
@@ -45,18 +43,21 @@ public class SafeDefaultActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         mApp.setMenuVisibility(false);
-        if (mDatabase != null)
-            mDatabase.destroy();
+        Database db = mApp.getDatabase();
+        if (db != null)
+            db.destroy();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (mShowingDialog) return;
-        if (mDatabase == null) return;
 
-        if (mDatabase.ready() == true)
-            setAdapter();
+        Database db = mApp.getDatabase();
+        if (db == null) return;
+
+        if (db.ready() == true)
+            setAdapter(db);
     }
 
     // Inflate res/menu/mainmenu.xml
@@ -80,12 +81,7 @@ public class SafeDefaultActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.changepw:
-                if (!mDatabase.ready())
-                    // TODO: aquí codi per canviar la master password
-                    return true;
-
-
-
+                // TODO: aquí codi per canviar la master password
                 return true;
 
             case R.id.newsecret:
@@ -107,7 +103,7 @@ public class SafeDefaultActivity extends ListActivity {
 
     private void importSecrets() {
         try {
-            final Backup backup = new Backup(mDatabase);
+            final Backup backup = new Backup(mApp.getDatabase());
 
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Choose");
@@ -120,7 +116,7 @@ public class SafeDefaultActivity extends ListActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    setAdapter();
+                    setAdapter(mApp.getDatabase());
                 }
             });
             alert.show();
@@ -133,7 +129,7 @@ public class SafeDefaultActivity extends ListActivity {
     // Exportar secrets mitjançant un XML (segurament també encriptat)
     private void exportSecrets() {
         try {
-            Backup backup = new Backup(mDatabase);
+            Backup backup = new Backup(mApp.getDatabase());
             String filename = backup.doExport(mApp.masterPassword);
             showToast(filename + " saved.");
 
@@ -169,11 +165,9 @@ public class SafeDefaultActivity extends ListActivity {
                 String pw = input.getText().toString();
                 Database db = new EncryptedDatabase(new SQLDatabase(SafeDefaultActivity.this), SafeDefaultActivity.this, pw);
                 if (db.ready()) {
-                    mDatabase = db;
                     mApp.setDatabase(db);
-                    setAdapter();
+                    setAdapter(db);
                     mShowingDialog = false;
-
                     mApp.setMenuVisibility(true);
                     invalidateOptionsMenu();
                     mApp.masterPassword = pw;
@@ -191,10 +185,10 @@ public class SafeDefaultActivity extends ListActivity {
         mShowingDialog = true;
     }
 
-    private void setAdapter() {
+    private void setAdapter(Database db) {
         try {
-            if (!mDatabase.ready()) return;
-            List<Secret> secrets = mDatabase.getSecrets();
+            if (!db.ready()) return;
+            List<Secret> secrets = db.getSecrets();
             Secret[] secretsArray = new Secret[secrets.size()];
             secrets.toArray(secretsArray);
             ArrayAdapter<Secret> adapter = new ArrayAdapter<Secret>(this, android.R.layout.simple_list_item_1, secretsArray);
@@ -209,8 +203,6 @@ public class SafeDefaultActivity extends ListActivity {
     }
 
     private void newSecret() {
-        if (!mDatabase.ready()) return;
-
         Intent i = new Intent(this, NewSecretActivity.class);
         startActivity(i);
     }

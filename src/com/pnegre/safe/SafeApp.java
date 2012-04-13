@@ -4,8 +4,7 @@ import android.app.Application;
 
 
 // TODO: Implementar "tags" o categories
-// TODO: Poder editar els secrets des de l'activitat ShowSecretActivity
-// TODO: Exportar XML+ZIP la base de dades encriptada
+// TODO: Poder editar tots els camps dels "secrets"
 // TODO: Implementar canvi de password dins l'aplicació
 
 
