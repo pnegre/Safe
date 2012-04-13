@@ -117,7 +117,9 @@ public class SafeDefaultActivity extends ListActivity {
                     try {
                         String chosen = (String) items[item];
                         backup.doImport(chosen, mApp.masterPassword);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     setAdapter();
                 }
             });

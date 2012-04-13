@@ -35,20 +35,20 @@ class Backup {
 
         List<Secret> secrets = dataBase.getSecrets();
         for (Secret s : secrets) {
-            // TODO: enlloc d'atributs, estaria bé que fóssin tot elements XML
-            // Exemple: <secret><sitename>www.esliceu.com</sitename> etc...
-
             Element secretElement = doc.createElement("secret");
-            Attr attSiteName = doc.createAttribute("sitename");
-            attSiteName.setValue(s.name);
-            Attr attUserName = doc.createAttribute("username");
-            attUserName.setValue(s.username);
-            Attr attPassword = doc.createAttribute("password");
-            attPassword.setValue(s.password);
-            secretElement.setAttributeNode(attSiteName);
-            secretElement.setAttributeNode(attUserName);
-            secretElement.setAttributeNode(attPassword);
             rootElement.appendChild(secretElement);
+
+            Element e = doc.createElement("sitename");
+            e.appendChild(doc.createTextNode(s.name));
+            secretElement.appendChild(e);
+
+            e = doc.createElement("username");
+            e.appendChild(doc.createTextNode(s.username));
+            secretElement.appendChild(e);
+
+            e = doc.createElement("password");
+            e.appendChild(doc.createTextNode(s.password));
+            secretElement.appendChild(e);
         }
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -61,12 +61,8 @@ class Backup {
         SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
         OutputStream os = simpleCrypt.cryptedOutputStream(new FileOutputStream(file));
 
-        //initialize StreamResult with File object to save to file
-        StreamResult result = new StreamResult(os);
-        DOMSource source = new DOMSource(doc);
-        transformer.transform(source, result);
+        transformer.transform(new DOMSource(doc), new StreamResult(os));
         os.close();
-
         return filename;
     }
 
@@ -80,17 +76,37 @@ class Backup {
         Document doc = db.newDocument();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(new StreamSource(is), new DOMResult(doc));
+        Node root = doc.getFirstChild();
+        if (!root.getNodeName().equals("data")) throw new RuntimeException();
 
-        NodeList nl = doc.getElementsByTagName("secret");
         Set<Secret> secretSet = new TreeSet<Secret>(dataBase.getSecrets());
-        for (int i=0; i<nl.getLength(); i++) {
-            Element element = (Element) nl.item(i);
-            Secret s = new Secret(0,
-                    element.getAttribute("sitename"),
-                    element.getAttribute("username"),
-                    element.getAttribute("password"));
-            if (!secretSet.contains(s))
-                dataBase.newSecret(s);
+        NodeList nl = root.getChildNodes();
+        for(int i=0; i<nl.getLength(); i++) {
+            Node n = nl.item(i);
+            if (!n.getNodeName().equals("secret")) continue;
+
+            NodeList nl2 = n.getChildNodes();
+            String sitename = null, username = null, passwd = null;
+            for (int j=0; j<nl2.getLength(); j++) {
+                Node n2 = nl2.item(j);
+                if (n2.getNodeName().equals("sitename")) {
+                    String sn = ((Text) n2.getFirstChild()).getData();
+                    sitename = sn;
+                }
+                if (n2.getNodeName().equals("username")) {
+                    String sn = ((Text) n2.getFirstChild()).getData();
+                    username = sn;
+                }
+                if (n2.getNodeName().equals("password")) {
+                    String sn = ((Text) n2.getFirstChild()).getData();
+                    passwd = sn;
+                }
+            }
+            if (sitename != null && username != null && passwd != null) {
+                Secret s = new Secret(0,sitename,username,passwd);
+                if (!secretSet.contains(s))
+                    dataBase.newSecret(s);
+            }
         }
     }
 
