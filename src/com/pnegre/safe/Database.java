@@ -38,9 +38,16 @@ class Secret implements Comparable {
         return name;
     }
 
+    @Override
     public int compareTo(Object o) {
         Secret s = (Secret) o;
         return name.compareTo(s.name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Secret s = (Secret) o;
+        return s.name.equals(this.name);
     }
 }
 

@@ -17,6 +17,8 @@ import java.io.*;
 import java.util.*;
 
 class Backup {
+
+    private static final String BACKUP_DIR = "/Safe";
     private Database dataBase;
 
     Backup(Database dataBase) {
@@ -27,7 +29,6 @@ class Backup {
     String doExport(String password) throws Exception {
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
         Document doc = db.newDocument();
         Element rootElement = doc.createElement("data");
         doc.appendChild(rootElement);
@@ -81,20 +82,14 @@ class Backup {
         transformer.transform(new StreamSource(is), new DOMResult(doc));
 
         NodeList nl = doc.getElementsByTagName("secret");
-        int l = nl.getLength();
-        Set<String> secretSet = new HashSet<String>();
-        for (Object o : dataBase.getSecrets()) {
-            Secret s = (Secret) o;
-            secretSet.add(s.name);
-        }
-
-        for (int i=0; i<l; i++) {
+        Set<Secret> secretSet = new TreeSet<Secret>(dataBase.getSecrets());
+        for (int i=0; i<nl.getLength(); i++) {
             Element element = (Element) nl.item(i);
             Secret s = new Secret(0,
                     element.getAttribute("sitename"),
                     element.getAttribute("username"),
                     element.getAttribute("password"));
-            if (!secretSet.contains(s.name))
+            if (!secretSet.contains(s))
                 dataBase.newSecret(s);
         }
     }
@@ -117,7 +112,7 @@ class Backup {
 
     private File getSafeDirectory() {
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (sdCard.getAbsolutePath() + "/safe");
+        File dir = new File (sdCard.getAbsolutePath() + BACKUP_DIR);
         dir.mkdirs();
         System.out.println(dir.getAbsolutePath());
         return dir;
