@@ -110,21 +110,20 @@ public class SafeDefaultActivity extends ListActivity {
         dialog.show();
 
         Button dialogButton = (Button) dialog.findViewById(R.id.butokchpass);
+        final EditText et1 = (EditText) dialog.findViewById(R.id.pw1);
+        final EditText et2 = (EditText) dialog.findViewById(R.id.pw2);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: aquí el codi per canviar password. Verificar que l'usuari ha posat 2 cops la password correctament
-                dialog.dismiss();
+                String pw1 = et1.getText().toString();
+                String pw2 = et2.getText().toString();
+                if (!pw1.equals(pw2))
+                    showToast("Passwords don't match");
+                else {
+                    dialog.dismiss();
+                }
             }
         });
-
-//        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//            }
-//        });
-//
-//        alert.setView(view);
-//        alert.show();
     }
 
     private void importSecrets() {
