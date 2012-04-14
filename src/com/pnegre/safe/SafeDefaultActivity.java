@@ -83,7 +83,7 @@ public class SafeDefaultActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.changepw:
-                changePassword();
+                showChangePasswordDialog();
                 return true;
 
             case R.id.newsecret:
@@ -103,7 +103,7 @@ public class SafeDefaultActivity extends ListActivity {
         }
     }
 
-    private void changePassword() {
+    private void showChangePasswordDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle("Change Password");
         dialog.setContentView(R.layout.dialogchangepassword);
@@ -120,10 +120,32 @@ public class SafeDefaultActivity extends ListActivity {
                 if (!pw1.equals(pw2))
                     showToast("Passwords don't match");
                 else {
+                    changePassword(pw1);
                     dialog.dismiss();
                 }
             }
         });
+    }
+
+    private void changePassword(String newPass) {
+        try {
+            // TODO: fer més proves. Sembla que ja funciona el canvi de pass, però fer més proves...
+            Database db = mApp.getDatabase();
+            List<Secret> secrets = db.getSecrets();
+            db.wipe();
+
+            db = new EncryptedDatabase(new SQLDatabase(this), this, newPass, true);
+            for (Secret s : secrets) {
+                db.newSecret(s);
+            }
+
+            mApp.setDatabase(db);
+            setAdapter(db);
+            showToast("Password updated!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void importSecrets() {
@@ -143,6 +165,7 @@ public class SafeDefaultActivity extends ListActivity {
                         String chosen = (String) items[item];
                         backup.doImport(chosen, mApp.masterPassword);
                     } catch (Exception e) {
+                        showToast("Can't import!");
                         e.printStackTrace();
                     }
                     setAdapter(mApp.getDatabase());
@@ -192,7 +215,7 @@ public class SafeDefaultActivity extends ListActivity {
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String pw = input.getText().toString();
-                Database db = new EncryptedDatabase(new SQLDatabase(SafeDefaultActivity.this), SafeDefaultActivity.this, pw);
+                Database db = new EncryptedDatabase(new SQLDatabase(SafeDefaultActivity.this), SafeDefaultActivity.this, pw, false);
                 if (db.ready()) {
                     mApp.setDatabase(db);
                     setAdapter(db);

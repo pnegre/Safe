@@ -79,7 +79,7 @@ class EncryptedDatabase implements Database {
     private boolean mIsReady;
     private Database cleanDatabase;
 
-    EncryptedDatabase(Database db, Context ctx, String password) {
+    EncryptedDatabase(Database db, Context ctx, String password, boolean force) {
         try {
             SQL2 sql2 = new SQL2(ctx);
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -87,7 +87,7 @@ class EncryptedDatabase implements Database {
             String userPw = Base64.encodeBytes(md.digest());
             String storedPw = sql2.getPassword();
 
-            if (storedPw == null)
+            if (storedPw == null || force)
                 sql2.savePassword(userPw);
             else if (!userPw.equals(storedPw)) throw new DatabaseException();
 
