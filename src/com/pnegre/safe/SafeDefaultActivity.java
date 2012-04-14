@@ -1,6 +1,7 @@
 package com.pnegre.safe;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -70,6 +71,7 @@ public class SafeDefaultActivity extends ListActivity {
             menu.findItem(R.id.newsecret).setVisible(true);
             menu.findItem(R.id.importsecrets).setVisible(true);
             menu.findItem(R.id.exportsecrets).setVisible(true);
+            menu.findItem(R.id.changepw).setVisible(true);
         }
 
         return true;
@@ -81,7 +83,7 @@ public class SafeDefaultActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.changepw:
-                // TODO: aquí codi per canviar la master password
+                changePassword();
                 return true;
 
             case R.id.newsecret:
@@ -101,13 +103,41 @@ public class SafeDefaultActivity extends ListActivity {
         }
     }
 
+    private void changePassword() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setTitle("Change Password");
+        dialog.setContentView(R.layout.dialogchangepassword);
+        dialog.show();
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.butokchpass);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: aquí el codi per canviar password. Verificar que l'usuari ha posat 2 cops la password correctament
+                dialog.dismiss();
+            }
+        });
+
+//        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//            }
+//        });
+//
+//        alert.setView(view);
+//        alert.show();
+    }
+
     private void importSecrets() {
         try {
             final Backup backup = new Backup(mApp.getDatabase());
-
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Choose");
             final CharSequence[] items = backup.enumerateFiles();
+            if (items.length == 0) {
+                showToast("No backups detected");
+                return;
+            }
+
             alert.setItems(items, new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialogInterface, int item) {
                     try {

@@ -65,6 +65,7 @@ interface Database {
     Secret getSecret(int id) throws Exception;
     void deleteSecret(int id) throws Exception;
     void updateSecret(Secret s) throws Exception;
+    void wipe();
 
 }
 
@@ -149,6 +150,11 @@ class EncryptedDatabase implements Database {
         cleanDatabase.updateSecret(ss);
     }
 
+    @Override
+    public void wipe() {
+        cleanDatabase.wipe();
+    }
+
 
     private void encryptSecret(Secret s) throws Exception {
         s.name = cryptString(s.name);
@@ -196,10 +202,6 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
         db.execSQL("drop table if exists secret");
     }
 
-    public void deleteAllData() {
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from secret");
-    }
 
     // Stores encrypted information on sql database
     public void newSecret(Secret secret) {
@@ -264,6 +266,12 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
         values.clear();
         values.put("password",s.password);
         db.update("secret", values, "id=" + s.id, null);
+    }
+
+    @Override
+    public void wipe() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("delete from secret");
     }
 
 }
