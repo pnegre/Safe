@@ -140,10 +140,12 @@ public class SafeDefaultActivity extends ListActivity {
             }
 
             mApp.setDatabase(db);
+            mApp.masterPassword = newPass;
             setAdapter(db);
             showToast("Password updated!");
 
         } catch (Exception e) {
+            showToast("Can't change password");
             e.printStackTrace();
         }
     }
