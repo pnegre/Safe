@@ -9,6 +9,7 @@ import android.util.Log;
 import net.iharder.base64.Base64;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -95,6 +96,8 @@ class EncryptedDatabase implements Database {
             mIsReady = true;
             cleanDatabase = db;
 
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Fatal: Algorithm MD5 Not supported");
         } catch (Exception e) {
             Log.d(SafeApp.LOG_TAG, "Problem initializing encrypted database");
             e.printStackTrace();
