@@ -4,10 +4,7 @@ import javax.crypto.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.spec.KeySpec;
 
 
@@ -79,59 +76,34 @@ class SimpleCrypt {
         }
     }
 
-    byte[] crypt(byte[] clear) throws Exception {
+    private byte[] doFinal(byte[] in) {
+        try {
+            return theCipher.doFinal(in);
+        } catch (IllegalBlockSizeException e) {
+            throw new RuntimeException();
+        } catch (BadPaddingException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    byte[] crypt(byte[] clear) {
         initCipher(Cipher.ENCRYPT_MODE);
-        byte[] result = theCipher.doFinal(clear);
-        return result;
+        return doFinal(clear);
     }
 
-    byte[] decrypt(byte[] crypted) throws Exception {
+    byte[] decrypt(byte[] crypted)  {
         initCipher(Cipher.DECRYPT_MODE);
-        byte[] result = theCipher.doFinal(crypted);
-        return result;
+        return doFinal(crypted);
     }
 
-    OutputStream cryptedOutputStream(OutputStream out) throws Exception {
+    OutputStream cryptedOutputStream(OutputStream out) {
         initCipher(Cipher.ENCRYPT_MODE);
         return new CipherOutputStream(out,theCipher);
     }
 
-    InputStream decryptedInputStream(InputStream in) throws  Exception {
+    InputStream decryptedInputStream(InputStream in) {
         initCipher(Cipher.DECRYPT_MODE);
         return new CipherInputStream(in, theCipher);
-    }
-
-    public void cryptFile(InputStream in, OutputStream out) throws Exception {
-        // Bytes written to out will be encrypted
-        initCipher(Cipher.ENCRYPT_MODE);
-        out = new CipherOutputStream(out, theCipher);
-
-        process(in, out);
-        out.close();
-    }
-
-    public void decryptFile(InputStream in, OutputStream out) throws Exception {
-        // Bytes read from in will be decrypted
-        initCipher(Cipher.DECRYPT_MODE);
-        in = new CipherInputStream(in, theCipher);
-
-        process(in, out);
-        out.close();
-    }
-
-    public void cryptRawData(byte[] data, OutputStream out) throws Exception {
-        initCipher(Cipher.ENCRYPT_MODE);
-        InputStream in = new ByteArrayInputStream(data);
-        out = new CipherOutputStream(out, theCipher);
-
-        process(in, out);
-        out.close();
-    }
-
-    private void process(InputStream in, OutputStream out) throws Exception {
-        int n;
-        while ((n = in.read(buf)) >= 0)
-            out.write(buf, 0, n);
     }
 }
 

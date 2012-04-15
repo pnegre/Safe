@@ -36,27 +36,22 @@ public class ShowSecretActivity extends Activity {
         mApp = (SafeApp) getApplication();
         mDatabase = mApp.getDatabase();
 
-        try {
-            Bundle extras = getIntent().getExtras();
-            int secretId = extras.getInt("secretid");
-            mSecret = mDatabase.getSecret(secretId);
-            mTVName = (TextView) findViewById(R.id.secretsitename);
-            mTVName.setText(mSecret.name);
-            mTVUsname = (TextView) findViewById(R.id.secretsiteusname);
-            mTVUsname.setText(mSecret.username);
-            mTVPassword = (TextView) findViewById(R.id.secretsitepw);
-            showPasswordFlip();
+        Bundle extras = getIntent().getExtras();
+        int secretId = extras.getInt("secretid");
+        mSecret = mDatabase.getSecret(secretId);
+        mTVName = (TextView) findViewById(R.id.secretsitename);
+        mTVName.setText(mSecret.name);
+        mTVUsname = (TextView) findViewById(R.id.secretsiteusname);
+        mTVUsname.setText(mSecret.username);
+        mTVPassword = (TextView) findViewById(R.id.secretsitepw);
+        showPasswordFlip();
 
-            mCBShowPw = (CheckBox) findViewById(R.id.checkpw);
-            mCBShowPw.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    showPasswordFlip();
-                }
-            });
-
-        } catch (Exception e) {
-            Log.d(SafeApp.LOG_TAG, "Exception in ShowSecretActivity.onCreate");
-        }
+        mCBShowPw = (CheckBox) findViewById(R.id.checkpw);
+        mCBShowPw.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showPasswordFlip();
+            }
+        });
     }
 
     // Mostra diàleg per esborrar el secret
@@ -79,11 +74,7 @@ public class ShowSecretActivity extends Activity {
 
     // Esborra el secret
     void deleteSecret() {
-        try {
-            mDatabase.deleteSecret(mSecret.id);
-        } catch (Exception e) {
-            Log.d(SafeApp.LOG_TAG, "Exception deleting secret");
-        }
+        mDatabase.deleteSecret(mSecret.id);
         finish();
     }
 
@@ -131,14 +122,8 @@ public class ShowSecretActivity extends Activity {
 
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    mSecret.password = input.getText().toString();
-                    mDatabase.updateSecret(mSecret);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d(SafeApp.LOG_TAG,"Error updating register " + mSecret.id);
-                }
-
+                mSecret.password = input.getText().toString();
+                mDatabase.updateSecret(mSecret);
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

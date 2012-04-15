@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import net.iharder.base64.Base64;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -61,11 +62,11 @@ interface Database {
 
     void destroy();
     boolean ready();
-    List getSecrets() throws Exception;
-    void newSecret(Secret s) throws Exception;
-    Secret getSecret(int id) throws Exception;
-    void deleteSecret(int id) throws Exception;
-    void updateSecret(Secret s) throws Exception;
+    List getSecrets();
+    void newSecret(Secret s);
+    Secret getSecret(int id);
+    void deleteSecret(int id);
+    void updateSecret(Secret s);
     void wipe();
 
 }
@@ -117,7 +118,7 @@ class EncryptedDatabase implements Database {
     }
 
     @Override
-    public List getSecrets() throws Exception {
+    public List getSecrets()  {
         List<Secret> slist = cleanDatabase.getSecrets();
         for (Secret s : slist)
             decryptSecret(s);
@@ -128,26 +129,26 @@ class EncryptedDatabase implements Database {
     }
 
     @Override
-    public void newSecret(Secret s) throws Exception {
+    public void newSecret(Secret s) {
         Secret ss = new Secret(s);
         encryptSecret(ss);
         cleanDatabase.newSecret(ss);
     }
 
     @Override
-    public Secret getSecret(int id) throws Exception {
+    public Secret getSecret(int id) {
         Secret s = cleanDatabase.getSecret(id);
         decryptSecret(s);
         return s;
     }
 
     @Override
-    public void deleteSecret(int id) throws Exception {
+    public void deleteSecret(int id)  {
         cleanDatabase.deleteSecret(id);
     }
 
     @Override
-    public void updateSecret(Secret s) throws Exception {
+    public void updateSecret(Secret s)  {
         Secret ss = new Secret(s);
         encryptSecret(ss);
         cleanDatabase.updateSecret(ss);
@@ -159,25 +160,31 @@ class EncryptedDatabase implements Database {
     }
 
 
-    private void encryptSecret(Secret s) throws Exception {
+    private void encryptSecret(Secret s) {
         s.name = cryptString(s.name);
         s.username = cryptString(s.username);
         s.password = cryptString(s.password);
     }
 
-    private void decryptSecret(Secret s) throws Exception {
+    private void decryptSecret(Secret s) {
         s.name = decryptString(s.name);
         s.username = decryptString(s.username);
         s.password = decryptString(s.password);
     }
 
-    private String cryptString(String clear) throws Exception {
+    private String cryptString(String clear)  {
         return Base64.encodeBytes(mCrypt.crypt(clear.getBytes()));
     }
 
-    private String decryptString(String crypted) throws Exception {
-        byte[] raw = Base64.decode(crypted.getBytes());
-        return new String(mCrypt.decrypt(raw));
+    private String decryptString(String crypted) {
+        try {
+            byte[] raw = Base64.decode(crypted.getBytes());
+            return new String(mCrypt.decrypt(raw));
+
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+
     }
 
 
@@ -220,7 +227,7 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
     }
 
     @Override
-    public Secret getSecret(int id) throws Exception {
+    public Secret getSecret(int id) {
         List<Secret> ss = getSecrets();
         for (Secret s : ss)
             if (s.id == id) return s;

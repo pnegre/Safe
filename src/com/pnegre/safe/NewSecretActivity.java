@@ -45,13 +45,9 @@ public class NewSecretActivity extends Activity {
             });
             alert.show();
         } else {
-            try {
-                Secret s = new Secret(0, sname, usname, pw);
-                mDatabase.newSecret(s);
-                finish();
-            } catch (Exception e) {
-                Log.d(SafeApp.LOG_TAG, "Error when inserting new secret");
-            }
+            Secret s = new Secret(0, sname, usname, pw);
+            mDatabase.newSecret(s);
+            finish();
         }
     }
 

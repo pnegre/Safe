@@ -128,26 +128,20 @@ public class SafeDefaultActivity extends ListActivity {
     }
 
     private void changePassword(String newPass) {
-        try {
-            // TODO: fer més proves. Sembla que ja funciona el canvi de pass, però fer més proves...
-            Database db = mApp.getDatabase();
-            List<Secret> secrets = db.getSecrets();
-            db.wipe();
+        // TODO: fer més proves. Sembla que ja funciona el canvi de pass, però fer més proves...
+        Database db = mApp.getDatabase();
+        List<Secret> secrets = db.getSecrets();
+        db.wipe();
 
-            db = new EncryptedDatabase(new SQLDatabase(this), this, newPass, true);
-            for (Secret s : secrets) {
-                db.newSecret(s);
-            }
-
-            mApp.setDatabase(db);
-            mApp.masterPassword = newPass;
-            setAdapter(db);
-            showToast("Password updated!");
-
-        } catch (Exception e) {
-            showToast("Can't change password");
-            e.printStackTrace();
+        db = new EncryptedDatabase(new SQLDatabase(this), this, newPass, true);
+        for (Secret s : secrets) {
+            db.newSecret(s);
         }
+
+        mApp.setDatabase(db);
+        mApp.masterPassword = newPass;
+        setAdapter(db);
+        showToast("Password updated!");
     }
 
     private void importSecrets() {
