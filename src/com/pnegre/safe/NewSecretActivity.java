@@ -15,7 +15,6 @@ import android.widget.EditText;
 public class NewSecretActivity extends Activity {
     private EditText mETsitename, mETusername, mETpassword;
     private SafeApp mApp;
-    private Database mDatabase;
 
     /**
      * Called when the activity is first created.
@@ -25,7 +24,6 @@ public class NewSecretActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newsecret);
         mApp = (SafeApp) getApplication();
-        mDatabase = mApp.getDatabase();
 
         mETsitename = (EditText) findViewById(R.id.sitename);
         mETusername = (EditText) findViewById(R.id.siteusname);
@@ -46,7 +44,7 @@ public class NewSecretActivity extends Activity {
             alert.show();
         } else {
             Secret s = new Secret(0, sname, usname, pw);
-            mDatabase.newSecret(s);
+            mApp.getDatabase().newSecret(s);
             finish();
         }
     }

@@ -1,7 +1,6 @@
 package com.pnegre.safe;
 
 import javax.crypto.*;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.*;
@@ -53,14 +52,45 @@ class Key256AES implements Key, KeySpec, SecretKey {
 
 
 class SimpleCrypt {
-    private Key secretKey;
-    private Cipher theCipher;
-    private byte[] buf = new byte[1024];
+    private SimpleAESCipher simpleCipher;
 
     SimpleCrypt(byte[] masterPw) {
-        secretKey = new Key256AES(masterPw);
+        Key secretKey = new Key256AES(masterPw);
+        simpleCipher = new SimpleAESCipher(secretKey);
+    }
+
+    byte[] crypt(byte[] clear) {
+        simpleCipher.init(Cipher.ENCRYPT_MODE);
+        return simpleCipher.doFinal(clear);
+    }
+
+    byte[] decrypt(byte[] crypted)  {
+        simpleCipher.init(Cipher.DECRYPT_MODE);
+        return simpleCipher.doFinal(crypted);
+    }
+
+    OutputStream cryptedOutputStream(OutputStream out) {
+        simpleCipher.init(Cipher.ENCRYPT_MODE);
+        return new CipherOutputStream(out, simpleCipher.getCipher());
+    }
+
+    InputStream decryptedInputStream(InputStream in) {
+        simpleCipher.init(Cipher.DECRYPT_MODE);
+        return new CipherInputStream(in, simpleCipher.getCipher());
+    }
+}
+
+/**
+ * Cipher simplificat (transforma les excepcions en runtime)
+ */
+class SimpleAESCipher {
+    private Cipher cipher;
+    private Key key;
+
+    SimpleAESCipher(Key k) {
         try {
-            theCipher = Cipher.getInstance("AES");
+            key = k;
+            cipher = Cipher.getInstance("AES");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException();
         } catch (NoSuchPaddingException e) {
@@ -68,17 +98,17 @@ class SimpleCrypt {
         }
     }
 
-    private void initCipher(int mode) {
+    void init(int mode) {
         try {
-            theCipher.init(mode, secretKey);
+            cipher.init(mode, key);
         } catch (InvalidKeyException e) {
-            throw new RuntimeException("Should not happen");
+            throw new RuntimeException();
         }
     }
 
-    private byte[] doFinal(byte[] in) {
+    byte[] doFinal(byte[] in) {
         try {
-            return theCipher.doFinal(in);
+            return cipher.doFinal(in);
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException();
         } catch (BadPaddingException e) {
@@ -86,24 +116,8 @@ class SimpleCrypt {
         }
     }
 
-    byte[] crypt(byte[] clear) {
-        initCipher(Cipher.ENCRYPT_MODE);
-        return doFinal(clear);
-    }
-
-    byte[] decrypt(byte[] crypted)  {
-        initCipher(Cipher.DECRYPT_MODE);
-        return doFinal(crypted);
-    }
-
-    OutputStream cryptedOutputStream(OutputStream out) {
-        initCipher(Cipher.ENCRYPT_MODE);
-        return new CipherOutputStream(out,theCipher);
-    }
-
-    InputStream decryptedInputStream(InputStream in) {
-        initCipher(Cipher.DECRYPT_MODE);
-        return new CipherInputStream(in, theCipher);
+    Cipher getCipher() {
+        return cipher;
     }
 }
 
