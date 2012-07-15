@@ -61,12 +61,19 @@ class DatabaseException extends Exception {
 interface Database {
 
     void destroy();
+
     boolean ready();
+
     List getSecrets();
+
     void newSecret(Secret s);
+
     Secret getSecret(int id);
+
     void deleteSecret(int id);
+
     void updateSecret(Secret s);
+
     void wipe();
 
 }
@@ -118,7 +125,7 @@ class EncryptedDatabase implements Database {
     }
 
     @Override
-    public List getSecrets()  {
+    public List getSecrets() {
         List<Secret> slist = cleanDatabase.getSecrets();
         for (Secret s : slist)
             decryptSecret(s);
@@ -143,12 +150,12 @@ class EncryptedDatabase implements Database {
     }
 
     @Override
-    public void deleteSecret(int id)  {
+    public void deleteSecret(int id) {
         cleanDatabase.deleteSecret(id);
     }
 
     @Override
-    public void updateSecret(Secret s)  {
+    public void updateSecret(Secret s) {
         Secret ss = new Secret(s);
         encryptSecret(ss);
         cleanDatabase.updateSecret(ss);
@@ -172,7 +179,7 @@ class EncryptedDatabase implements Database {
         s.password = decryptString(s.password);
     }
 
-    private String cryptString(String clear)  {
+    private String cryptString(String clear) {
         return Base64.encodeBytes(mCrypt.crypt(clear.getBytes()));
     }
 
@@ -274,9 +281,9 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
         SQLiteDatabase db = getReadableDatabase();
         ContentValues values = new ContentValues();
         values.clear();
-        values.put("name",s.name);
-        values.put("username",s.username);
-        values.put("password",s.password);
+        values.put("name", s.name);
+        values.put("username", s.username);
+        values.put("password", s.password);
         db.update("secret", values, "id=" + s.id, null);
     }
 

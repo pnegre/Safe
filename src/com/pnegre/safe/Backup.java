@@ -14,7 +14,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 class Backup {
 
@@ -81,13 +83,13 @@ class Backup {
 
         Set<Secret> secretSet = new TreeSet<Secret>(dataBase.getSecrets());
         NodeList nl = root.getChildNodes();
-        for(int i=0; i<nl.getLength(); i++) {
+        for (int i = 0; i < nl.getLength(); i++) {
             Node n = nl.item(i);
             if (!n.getNodeName().equals("secret")) continue;
 
             NodeList nl2 = n.getChildNodes();
             String sitename = null, username = null, passwd = null;
-            for (int j=0; j<nl2.getLength(); j++) {
+            for (int j = 0; j < nl2.getLength(); j++) {
                 Node n2 = nl2.item(j);
                 if (n2.getNodeName().equals("sitename")) {
                     String sn = ((Text) n2.getFirstChild()).getData();
@@ -103,7 +105,7 @@ class Backup {
                 }
             }
             if (sitename != null && username != null && passwd != null) {
-                Secret s = new Secret(0,sitename,username,passwd);
+                Secret s = new Secret(0, sitename, username, passwd);
                 if (!secretSet.contains(s))
                     dataBase.newSecret(s);
             }
@@ -112,14 +114,13 @@ class Backup {
 
     /**
      * Cerca fitxers backup. Retorna una llista
-     *
      */
     String[] enumerateFiles() {
         File dir = getSafeDirectory();
         File[] files = dir.listFiles();
         int total = files.length;
         String[] result = new String[total];
-        for(int i=0;i<total;i++)
+        for (int i = 0; i < total; i++)
             result[i] = files[i].getName();
 
         return result;
@@ -128,7 +129,7 @@ class Backup {
 
     private File getSafeDirectory() {
         File sdCard = Environment.getExternalStorageDirectory();
-        File dir = new File (sdCard.getAbsolutePath() + BACKUP_DIR);
+        File dir = new File(sdCard.getAbsolutePath() + BACKUP_DIR);
         dir.mkdirs();
         System.out.println(dir.getAbsolutePath());
         return dir;

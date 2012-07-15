@@ -20,8 +20,7 @@ public class EditSecretActivity extends CommonSecret {
                     if (t.equals(SafeApp.PASS_HIDE_STRING)) {
                         mETpassword.setText("");
                     }
-                }
-                else {
+                } else {
                     if (t.equals("")) {
                         mETpassword.setText(SafeApp.PASS_HIDE_STRING);
                     }

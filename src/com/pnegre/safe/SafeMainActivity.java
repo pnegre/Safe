@@ -146,7 +146,7 @@ public class SafeMainActivity extends ListActivity {
                 return;
             }
 
-            alert.setItems(items, new DialogInterface.OnClickListener(){
+            alert.setItems(items, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogInterface, int item) {
                     try {
                         String chosen = (String) items[item];
@@ -190,7 +190,6 @@ public class SafeMainActivity extends ListActivity {
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 
 
     private void setAdapter(Database db) {

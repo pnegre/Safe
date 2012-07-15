@@ -12,12 +12,11 @@ import android.widget.EditText;
 
 /**
  * Main application entry point
- *
  */
 public class InitialActivity extends Activity {
 
     private SafeApp mApp;
-    private Button  mBTmasterSecret;
+    private Button mBTmasterSecret;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,6 @@ public class InitialActivity extends Activity {
             }
         });
     }
-
 
 
     private void showMasterPwDialog() {
@@ -67,7 +65,6 @@ public class InitialActivity extends Activity {
         alert.setView(input);
         alert.show();
     }
-
 
 
     private void startMainActivity() {

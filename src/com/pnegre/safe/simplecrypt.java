@@ -3,7 +3,10 @@ package com.pnegre.safe;
 import javax.crypto.*;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
 
@@ -64,7 +67,7 @@ class SimpleCrypt {
         return simpleCipher.doFinal(clear);
     }
 
-    byte[] decrypt(byte[] crypted)  {
+    byte[] decrypt(byte[] crypted) {
         simpleCipher.init(Cipher.DECRYPT_MODE);
         return simpleCipher.doFinal(crypted);
     }
