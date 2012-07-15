@@ -41,7 +41,9 @@ public class InitialActivity extends Activity {
         alert.setTitle("Password");
         // Set an EditText view to get user input
         final EditText input = new EditText(this);
+        input.setSingleLine();
         input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
+//        input.setTransformationMethod(new android.text.method.SingleLineTransformationMethod().getInstance());
 
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {

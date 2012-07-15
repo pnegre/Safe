@@ -118,6 +118,7 @@ public class ShowSecretActivity extends Activity {
         alert.setTitle("New Password");
         // Set an EditText view to get user input
         final EditText input = new EditText(this);
+        input.setSingleLine();
         input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
 
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
