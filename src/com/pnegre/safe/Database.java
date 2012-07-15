@@ -274,6 +274,8 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
         SQLiteDatabase db = getReadableDatabase();
         ContentValues values = new ContentValues();
         values.clear();
+        values.put("name",s.name);
+        values.put("username",s.username);
         values.put("password",s.password);
         db.update("secret", values, "id=" + s.id, null);
     }

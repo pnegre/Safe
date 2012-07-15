@@ -15,6 +15,8 @@ import android.widget.EditText;
 public class NewSecretActivity extends Activity {
     private EditText mETsitename, mETusername, mETpassword;
     private SafeApp mApp;
+    Database mDatabase;
+    Secret mSecret = null;
 
     /**
      * Called when the activity is first created.
@@ -24,10 +26,24 @@ public class NewSecretActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newsecret);
         mApp = (SafeApp) getApplication();
+        mDatabase = mApp.getDatabase();
 
         mETsitename = (EditText) findViewById(R.id.sitename);
         mETusername = (EditText) findViewById(R.id.siteusname);
         mETpassword = (EditText) findViewById(R.id.sitepassword);
+
+        // See if callee has included the "secretid" parameter
+        try {
+            Bundle extras = getIntent().getExtras();
+            int secretId = extras.getInt("secretid");
+            mSecret = mDatabase.getSecret(secretId);
+            mETsitename.setText(mSecret.name);
+            mETusername.setText(mSecret.username);
+        }
+        catch (java.lang.NullPointerException npe) { }
+
+
+
     }
 
     void newSecret() {
@@ -43,8 +59,17 @@ public class NewSecretActivity extends Activity {
             });
             alert.show();
         } else {
-            Secret s = new Secret(0, sname, usname, pw);
-            mApp.getDatabase().newSecret(s);
+            // Create new secret or update an existing one
+            if (mSecret == null) {
+                Secret s = new Secret(0, sname, usname, pw);
+                mDatabase.newSecret(s);
+            } else {
+                mSecret.name = sname;
+                mSecret.username = usname;
+                // update password only if user has provided a new one
+                if (pw.length() > 0) mSecret.password = pw;
+                mDatabase.updateSecret(mSecret);
+            }
             finish();
         }
     }
