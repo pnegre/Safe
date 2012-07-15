@@ -89,8 +89,8 @@ class EncryptedDatabase implements Database {
     private Database cleanDatabase;
 
     EncryptedDatabase(Database db, Context ctx, String password, boolean force) {
+        SQL2 sql2 = new SQL2(ctx);
         try {
-            SQL2 sql2 = new SQL2(ctx);
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
             String userPw = Base64.encodeBytes(md.digest());
@@ -109,6 +109,8 @@ class EncryptedDatabase implements Database {
         } catch (Exception e) {
             Log.d(SafeApp.LOG_TAG, "Problem initializing encrypted database");
             e.printStackTrace();
+        } finally {
+            sql2.close();
         }
     }
 
