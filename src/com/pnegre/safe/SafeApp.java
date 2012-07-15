@@ -5,8 +5,6 @@ import android.content.Context;
 
 
 // TODO: Implementar "tags" o categories
-// TODO: Poder editar tots els camps dels "secrets"
-// TODO: Implementar canvi de password dins l'aplicació
 
 
 public class SafeApp extends Application {

@@ -37,6 +37,7 @@ public class EditSecretActivity extends CommonSecret {
         mETpassword.setText(SafeApp.PASS_HIDE_STRING);
     }
 
+    @Override
     protected void saveNewSecret(String sname, String pw, String usname) {
         mSecret.name = sname;
         mSecret.username = usname;

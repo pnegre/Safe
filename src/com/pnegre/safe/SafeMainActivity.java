@@ -28,11 +28,7 @@ public class SafeMainActivity extends ListActivity {
         mApp = (SafeApp) getApplication();
         ListView lv = getListView();
         LayoutInflater inflater = getLayoutInflater();
-//        mHeader = (ViewGroup) inflater.inflate(R.layout.header, lv, false);
-//        lv.addHeaderView(mHeader, null, false);
         setAdapter(mApp.getDatabase());
-
-
     }
 
     @Override
