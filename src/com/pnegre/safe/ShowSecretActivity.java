@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -120,6 +120,7 @@ public class ShowSecretActivity extends Activity {
         final EditText input = new EditText(this);
         input.setSingleLine();
         input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
+        input.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
