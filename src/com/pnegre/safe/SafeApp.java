@@ -1,6 +1,7 @@
 package com.pnegre.safe;
 
 import android.app.Application;
+import android.content.Context;
 
 
 // TODO: Implementar "tags" o categories
@@ -12,8 +13,9 @@ public class SafeApp extends Application {
     private Database mDatabase;
     private boolean showMenu = false;
     String masterPassword = null;
+    public Context context = null;
 
-    public static final String LOG_TAG = "SafeDefaultActivity";
+    public static final String LOG_TAG = "SafeMainActivity";
     public static final String PASS_HIDE_STRING = "********";
 
     public void onCreate() {

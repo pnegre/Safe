@@ -13,11 +13,11 @@ import android.widget.*;
 import java.util.List;
 
 
-public class SafeDefaultActivity extends ListActivity {
+public class SafeMainActivity extends ListActivity {
     private SafeApp mApp;
     private boolean mShowingDialog = false;
     private ViewGroup mHeader;
-    private Button mBTmasterSecret;
+
 
     /**
      * Called when the activity is first created.
@@ -28,16 +28,11 @@ public class SafeDefaultActivity extends ListActivity {
         mApp = (SafeApp) getApplication();
         ListView lv = getListView();
         LayoutInflater inflater = getLayoutInflater();
-        mHeader = (ViewGroup) inflater.inflate(R.layout.header, lv, false);
-        lv.addHeaderView(mHeader, null, false);
-        setListAdapter(null);
+//        mHeader = (ViewGroup) inflater.inflate(R.layout.header, lv, false);
+//        lv.addHeaderView(mHeader, null, false);
+        setAdapter(mApp.getDatabase());
 
-        mBTmasterSecret = (Button) findViewById(R.id.butmastersecret);
-        mBTmasterSecret.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showMasterPwDialog();
-            }
-        });
+
     }
 
     @Override
@@ -201,37 +196,6 @@ public class SafeDefaultActivity extends ListActivity {
     }
 
 
-    private void showMasterPwDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Password");
-        // Set an EditText view to get user input
-        final EditText input = new EditText(this);
-        input.setTransformationMethod(new android.text.method.PasswordTransformationMethod().getInstance());
-
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String pw = input.getText().toString();
-                Database db = new EncryptedDatabase(new SQLDatabase(SafeDefaultActivity.this), SafeDefaultActivity.this, pw, false);
-                if (db.ready()) {
-                    mApp.setDatabase(db);
-                    setAdapter(db);
-                    mShowingDialog = false;
-                    mApp.setMenuVisibility(true);
-                    invalidateOptionsMenu();
-                    mApp.masterPassword = pw;
-                }
-            }
-        });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                mShowingDialog = false;
-            }
-        });
-
-        alert.setView(input);
-        alert.show();
-        mShowingDialog = true;
-    }
 
     private void setAdapter(Database db) {
         try {
@@ -245,7 +209,7 @@ public class SafeDefaultActivity extends ListActivity {
             lv.removeHeaderView(mHeader);
 
         } catch (Exception e) {
-            Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (SafeDefaultActivity class)");
+            Log.d(SafeApp.LOG_TAG, "Problem in setAdapter (SafeMainActivity class)");
             e.printStackTrace();
         }
     }
