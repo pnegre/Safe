@@ -32,6 +32,23 @@ public class NewSecretActivity extends Activity {
         mETusername = (EditText) findViewById(R.id.siteusname);
         mETpassword = (EditText) findViewById(R.id.sitepassword);
 
+        mETpassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                String t = mETpassword.getText().toString();
+
+                if (hasFocus) {
+                    if (t.equals(SafeApp.PASS_HIDE_STRING)) {
+                        mETpassword.setText("");
+                    }
+                }
+                else {
+                    if (t.equals("")) {
+                        mETpassword.setText(SafeApp.PASS_HIDE_STRING);
+                    }
+                }
+            }
+        });
+
         // See if callee has included the "secretid" parameter
         try {
             Bundle extras = getIntent().getExtras();
@@ -39,18 +56,18 @@ public class NewSecretActivity extends Activity {
             mSecret = mDatabase.getSecret(secretId);
             mETsitename.setText(mSecret.name);
             mETusername.setText(mSecret.username);
+            mETpassword.setText(SafeApp.PASS_HIDE_STRING);
         }
         catch (java.lang.NullPointerException npe) { }
-
-
-
     }
+
+
 
     void newSecret() {
         String sname = mETsitename.getText().toString();
         String usname = mETusername.getText().toString();
         String pw = mETpassword.getText().toString();
-        if (sname.equals("") || pw.equals("")) {
+        if (sname.equals("") || pw.equals("") || usname.equals("")) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("No Blanks!");
             alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -67,7 +84,7 @@ public class NewSecretActivity extends Activity {
                 mSecret.name = sname;
                 mSecret.username = usname;
                 // update password only if user has provided a new one
-                if (pw.length() > 0) mSecret.password = pw;
+                if (!pw.equals(SafeApp.PASS_HIDE_STRING)) mSecret.password = pw;
                 mDatabase.updateSecret(mSecret);
             }
             finish();

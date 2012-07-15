@@ -5,14 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -36,10 +33,6 @@ public class ShowSecretActivity extends Activity {
         mApp = (SafeApp) getApplication();
         mDatabase = mApp.getDatabase();
 
-        Bundle extras = getIntent().getExtras();
-        int secretId = extras.getInt("secretid");
-        mSecret = mDatabase.getSecret(secretId);
-
         mTVName = (TextView) findViewById(R.id.secretsitename);
         mTVUsname = (TextView) findViewById(R.id.secretsiteusname);
         mTVPassword = (TextView) findViewById(R.id.secretsitepw);
@@ -55,7 +48,9 @@ public class ShowSecretActivity extends Activity {
     public void onResume() {
         super.onResume();
         // Refresh data
-        mSecret = mDatabase.getSecret(mSecret.id);
+        Bundle extras = getIntent().getExtras();
+        int secretId = extras.getInt("secretid");
+        mSecret = mDatabase.getSecret(secretId);
         mTVName.setText(mSecret.name);
         mTVUsname.setText(mSecret.username);
         mTVPassword.setText(SafeApp.PASS_HIDE_STRING);
@@ -93,12 +88,10 @@ public class ShowSecretActivity extends Activity {
     void showPasswordFlip() {
         mShowPassword = !mShowPassword;
 
-        if (mShowPassword == false)
-            mTVPassword.setText(SafeApp.PASS_HIDE_STRING);
-        else
+        if (mShowPassword)
             mTVPassword.setText(mSecret.password);
-
-
+        else
+            mTVPassword.setText(SafeApp.PASS_HIDE_STRING);
     }
 
     // Inflate res/menu/menuactivity.xml
