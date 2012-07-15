@@ -33,6 +33,11 @@
 			android:name="NewSecretActivity"
 			android:screenOrientation="portrait">
 		</activity>
+
+        <activity
+                android:name="EditSecretActivity"
+                android:screenOrientation="portrait">
+        </activity>
 		
 		<activity 
 			android:name="ShowSecretActivity"

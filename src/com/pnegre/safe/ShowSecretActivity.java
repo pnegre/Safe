@@ -111,7 +111,7 @@ public class ShowSecretActivity extends Activity {
                 break;
 
             case R.id.editsecret:
-                Intent i = new Intent(this, NewSecretActivity.class);
+                Intent i = new Intent(this, EditSecretActivity.class);
                 i.putExtra("secretid", mSecret.id);
                 startActivity(i);
                 break;
