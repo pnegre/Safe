@@ -52,6 +52,7 @@ public class SafeMainActivity extends ListActivity {
             setAdapter(db);
     }
 
+
     // Inflate res/menu/mainmenu.xml
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

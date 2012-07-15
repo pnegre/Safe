@@ -117,6 +117,7 @@ class EncryptedDatabase implements Database {
     public void destroy() {
         mIsReady = false;
         mCrypt = null;
+        cleanDatabase.destroy();
     }
 
     @Override
@@ -245,6 +246,7 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
 
     @Override
     public void destroy() {
+        close();
     }
 
     @Override
