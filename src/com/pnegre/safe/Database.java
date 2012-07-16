@@ -54,10 +54,6 @@ class Secret implements Comparable {
 }
 
 
-class DatabaseException extends Exception {
-}
-
-
 interface Database {
 
     void destroy();
@@ -88,7 +84,9 @@ class EncryptedDatabase implements Database {
     private boolean mIsReady;
     private Database cleanDatabase;
 
-    EncryptedDatabase(Database db, Context ctx, String password, boolean force) {
+    class PasswordIncorrectException extends Exception { }
+
+    EncryptedDatabase(Database db, Context ctx, String password, boolean force) throws PasswordIncorrectException {
         SQL2 sql2 = new SQL2(ctx);
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -98,7 +96,7 @@ class EncryptedDatabase implements Database {
 
             if (storedPw == null || force)
                 sql2.savePassword(userPw);
-            else if (!userPw.equals(storedPw)) throw new DatabaseException();
+            else if (!userPw.equals(storedPw)) throw new PasswordIncorrectException();
 
             mCrypt = new SimpleCrypt(password.getBytes());
             mIsReady = true;
@@ -106,9 +104,6 @@ class EncryptedDatabase implements Database {
 
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Fatal: Algorithm MD5 Not supported");
-        } catch (Exception e) {
-            Log.d(SafeApp.LOG_TAG, "Problem initializing encrypted database");
-            e.printStackTrace();
         } finally {
             sql2.close();
         }

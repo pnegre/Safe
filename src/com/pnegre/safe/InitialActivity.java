@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Main application entry point
@@ -45,15 +46,8 @@ public class InitialActivity extends Activity {
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String pw = input.getText().toString();
-                Database db = new EncryptedDatabase(new SQLDatabase(mApp), mApp, pw, false);
-                if (db.ready()) {
-                    mApp.setDatabase(db);
-                    mApp.setMenuVisibility(true);
-                    invalidateOptionsMenu();
-                    mApp.masterPassword = pw;
-                    InitialActivity.this.finish();
-                    startMainActivity();
-                }
+                InitDatabase(pw);
+
             }
         });
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -70,6 +64,23 @@ public class InitialActivity extends Activity {
     private void startMainActivity() {
         Intent i = new Intent(this, SafeMainActivity.class);
         startActivity(i);
+    }
+
+    private void InitDatabase(String pw) {
+        try {
+            Database db = new EncryptedDatabase(new SQLDatabase(mApp), mApp, pw, false);
+            if (db.ready()) {
+                mApp.setDatabase(db);
+                mApp.setMenuVisibility(true);
+                invalidateOptionsMenu();
+                mApp.masterPassword = pw;
+                finish();
+                startMainActivity();
+            }
+        }
+        catch (EncryptedDatabase.PasswordIncorrectException e) {
+            Toast.makeText(this, "Password Incorrect", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

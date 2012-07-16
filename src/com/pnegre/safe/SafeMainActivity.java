@@ -125,15 +125,18 @@ public class SafeMainActivity extends ListActivity {
         List<Secret> secrets = db.getSecrets();
         db.wipe();
 
-        db = new EncryptedDatabase(new SQLDatabase(this), this, newPass, true);
-        for (Secret s : secrets) {
-            db.newSecret(s);
-        }
+        // TODO: millorar això: no m'agrada gaire ignorar excepcions...
+        try {
+            db = new EncryptedDatabase(new SQLDatabase(this), this, newPass, true);
+            for (Secret s : secrets) {
+                db.newSecret(s);
+            }
 
-        mApp.setDatabase(db);
-        mApp.masterPassword = newPass;
-        setAdapter(db);
-        showToast("Password updated!");
+            mApp.setDatabase(db);
+            mApp.masterPassword = newPass;
+            setAdapter(db);
+            showToast("Password updated!");
+        } catch (Exception e) { }
     }
 
     private void importSecrets() {
