@@ -9,6 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.RandomAccess;
+
 
 abstract class CommonSecret extends Activity {
     protected EditText mETsitename, mETusername, mETpassword;
@@ -43,6 +48,11 @@ abstract class CommonSecret extends Activity {
             case R.id.secretsave:
                 newSecret();
                 break;
+
+            case R.id.genpassword:
+                mETpassword.setText(generatePassword(8));
+                mETpassword.requestFocus();
+                break;
         }
 
         return true;
@@ -63,6 +73,17 @@ abstract class CommonSecret extends Activity {
         } else {
             saveNewSecret(sname, pw, usname);
         }
+    }
+
+    protected String generatePassword(int len) {
+        Random rnd = new Random();
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String allChars = AB + AB.toLowerCase() + "0123456789";
+        StringBuilder sb = new StringBuilder(len);
+        for (int i=0; i<len; i++) {
+            sb.append(allChars.charAt(rnd.nextInt(allChars.length())));
+        }
+        return sb.toString();
     }
 
     protected abstract void saveNewSecret(String sname, String pw, String usname);
