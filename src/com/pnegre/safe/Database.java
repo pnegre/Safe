@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 
 class Secret implements Comparable {
@@ -89,14 +90,24 @@ class EncryptedDatabase implements Database {
     EncryptedDatabase(Database db, Context ctx, String password, boolean force) throws PasswordIncorrectException {
         SQL2 sql2 = new SQL2(ctx);
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(password.getBytes());
-            String userPw = Base64.encodeBytes(md.digest());
-            String storedPw = sql2.getPassword();
+            String storedHash = sql2.getPassword();
+            String salt = sql2.getSalt();
+            String saltedPassword = "";
 
-            if (storedPw == null || force)
-                sql2.savePassword(userPw);
-            else if (!userPw.equals(storedPw)) throw new PasswordIncorrectException();
+            if (salt == null || storedHash == null || force) {
+                salt = generateSalt();
+                saltedPassword = salt + password;
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(saltedPassword.getBytes());
+                String hash = Base64.encodeBytes(md.digest());
+                sql2.savePassword(hash, salt);
+            } else {
+                saltedPassword = salt + password;
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(saltedPassword.getBytes());
+                String hash = Base64.encodeBytes(md.digest());
+                if (!storedHash.equals(hash)) throw new PasswordIncorrectException();
+            }
 
             mCrypt = new SimpleCrypt(password.getBytes());
             mIsReady = true;
@@ -107,6 +118,17 @@ class EncryptedDatabase implements Database {
         } finally {
             sql2.close();
         }
+    }
+
+    private String generateSalt() {
+        Random rnd = new Random();
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String allChars = AB + AB.toLowerCase() + "0123456789";
+        StringBuilder sb = new StringBuilder(10);
+        for (int i=0; i<10; i++) {
+            sb.append(allChars.charAt(rnd.nextInt(allChars.length())));
+        }
+        return sb.toString();
     }
 
 
@@ -301,7 +323,7 @@ class SQLDatabase extends SQLiteOpenHelper implements Database {
 class SQL2 extends SQLiteOpenHelper {
 
     static final String DB_NAME = "safe_secret.db";
-    static final int DB_VERSION = 4;
+    static final int DB_VERSION = 5;
 
     // Constructor
     public SQL2(Context context) {
@@ -310,7 +332,7 @@ class SQL2 extends SQLiteOpenHelper {
 
     // Called only once, first time the DB is created
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table user ( username text, cryptedpassword text )";
+        String sql = "create table user ( username text, cryptedpassword text, salt text )";
         db.execSQL(sql);
     }
 
@@ -320,7 +342,7 @@ class SQL2 extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    void savePassword(String password) {
+    void savePassword(String password, String salt) {
         SQLiteDatabase db = getReadableDatabase();
         db.execSQL("delete from user");
 
@@ -328,12 +350,30 @@ class SQL2 extends SQLiteOpenHelper {
         values.clear();
         values.put("username", "user");
         values.put("cryptedpassword", password);
+        values.put("salt", salt);
         db.insertOrThrow("user", null, values);
     }
 
     String getPassword() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cs = db.query("user", new String[]{"username", "cryptedpassword"},
+                "username='user'", null, null, null, null);
+        cs.moveToFirst();
+        if (cs.isAfterLast()) {
+            cs.close();
+            db.close();
+            return null;
+        }
+        String result = cs.getString(1);
+        cs.close();
+        db.close();
+
+        return result;
+    }
+
+    String getSalt() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cs = db.query("user", new String[]{"username", "salt"},
                 "username='user'", null, null, null, null);
         cs.moveToFirst();
         if (cs.isAfterLast()) {
