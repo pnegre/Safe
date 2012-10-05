@@ -1,6 +1,8 @@
 package com.pnegre.safe;
 
 
+import com.pnegre.safe.database.Secret;
+
 public class NewSecretActivity extends CommonSecret {
 
     @Override

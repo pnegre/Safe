@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import com.pnegre.safe.database.Database;
+import com.pnegre.safe.database.EncryptedDatabase;
+import com.pnegre.safe.database.SQLDatabase;
+import com.pnegre.safe.database.Secret;
 
 import java.util.List;
 

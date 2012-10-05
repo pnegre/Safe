@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import com.pnegre.safe.database.Database;
+import com.pnegre.safe.database.Secret;
 
 
 public class ShowSecretActivity extends Activity {

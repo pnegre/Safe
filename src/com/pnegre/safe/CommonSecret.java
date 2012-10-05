@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
+import com.pnegre.safe.database.Database;
 
 import java.util.ArrayList;
 import java.util.List;

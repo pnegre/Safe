@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.pnegre.safe.database.Database;
+import com.pnegre.safe.database.EncryptedDatabase;
+import com.pnegre.safe.database.SQLDatabase;
 
 /**
  * Main application entry point

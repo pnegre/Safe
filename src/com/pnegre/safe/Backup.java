@@ -2,6 +2,9 @@ package com.pnegre.safe;
 
 import android.os.Environment;
 import android.util.Log;
+import com.pnegre.safe.database.Database;
+import com.pnegre.safe.database.Secret;
+import com.pnegre.simplecrypt.SimpleCrypt;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,6 +20,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 
 class Backup {
 

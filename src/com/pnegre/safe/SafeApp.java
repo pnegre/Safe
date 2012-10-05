@@ -1,6 +1,7 @@
 package com.pnegre.safe;
 
 import android.app.Application;
+import com.pnegre.safe.database.Database;
 
 
 // TODO: Implementar "tags" o categories

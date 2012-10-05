@@ -3,6 +3,7 @@ package com.pnegre.safe;
 
 import android.os.Bundle;
 import android.view.View;
+import com.pnegre.safe.database.Secret;
 
 public class EditSecretActivity extends CommonSecret {
 
