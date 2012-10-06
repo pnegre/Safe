@@ -1,7 +1,11 @@
 package com.pnegre.safe;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,6 +31,7 @@ public class NewPasswordActivity extends Activity {
 
     private RandPass rpass = new RandPass();
     private int passLenght = 8;
+    private String thePassword = "";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +85,32 @@ public class NewPasswordActivity extends Activity {
             pars += RandPass.NUMBERS;
 
         rpass.setAlphabet(pars);
-        generatedPw.setText(rpass.getPass(passLenght));
+        thePassword = rpass.getPass(passLenght);
+        generatedPw.setText(thePassword);
 
+    }
+
+    // Inflate res/menu/mainmenu.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menunewpassword, menu);
+
+        return true;
+    }
+
+    // Respond to user click on menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.savepass:
+                Intent i = new Intent(this, NewSecretActivity.class);
+                i.putExtra("password", thePassword);
+                startActivity(i);
+                finish();
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
