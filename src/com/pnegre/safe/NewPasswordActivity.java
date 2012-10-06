@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -21,8 +22,11 @@ public class NewPasswordActivity extends Activity {
     private CheckBox cbMixed;
     private CheckBox cbSymbols;
     private CheckBox cbNumbers;
+    private SeekBar seekBar;
+    private TextView pwlen;
 
     private RandPass rpass = new RandPass();
+    private int passLenght = 8;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +37,32 @@ public class NewPasswordActivity extends Activity {
         cbMixed = (CheckBox) findViewById(R.id.pwmixed);
         cbSymbols = (CheckBox) findViewById(R.id.pwsymbols);
         cbNumbers = (CheckBox) findViewById(R.id.pwnumbers);
+        seekBar = (SeekBar) findViewById(R.id.pwseekbar);
+        seekBar.setMax(11);
+        seekBar.setProgress(3);
+        pwlen = (TextView) findViewById(R.id.pwlen);
 
         butGenerate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 generatePassword();
 
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                passLenght = 5 + i;
+                pwlen.setText("Password Length: " + Integer.toString(passLenght));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
 
@@ -56,7 +80,7 @@ public class NewPasswordActivity extends Activity {
             pars += RandPass.NUMBERS;
 
         rpass.setAlphabet(pars);
-        generatedPw.setText(rpass.getPass(10));
+        generatedPw.setText(rpass.getPass(passLenght));
 
     }
 }
