@@ -94,9 +94,17 @@ public class SafeMainActivity extends ListActivity {
                 importSecrets();
                 return true;
 
+            case R.id.newpass:
+                newPassword();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void newPassword() {
+        Intent i = new Intent(this, NewPasswordActivity.class);
+        startActivity(i);
     }
 
     private void showChangePasswordDialog() {
