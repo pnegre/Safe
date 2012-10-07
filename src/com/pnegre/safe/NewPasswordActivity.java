@@ -26,6 +26,7 @@ public class NewPasswordActivity extends Activity {
     private CheckBox cbMixed;
     private CheckBox cbSymbols;
     private CheckBox cbNumbers;
+    private CheckBox cbPronunceable;
     private SeekBar seekBar;
     private TextView pwlen;
 
@@ -42,6 +43,7 @@ public class NewPasswordActivity extends Activity {
         cbMixed = (CheckBox) findViewById(R.id.pwmixed);
         cbSymbols = (CheckBox) findViewById(R.id.pwsymbols);
         cbNumbers = (CheckBox) findViewById(R.id.pwnumbers);
+        cbPronunceable = (CheckBox) findViewById(R.id.pwpronunceable);
         seekBar = (SeekBar) findViewById(R.id.pwseekbar);
         seekBar.setMax(11);
         seekBar.setProgress(3);
@@ -85,7 +87,11 @@ public class NewPasswordActivity extends Activity {
             pars += RandPass.NUMBERS;
 
         rpass.setAlphabet(pars);
-        thePassword = rpass.getPass(passLenght);
+        if (cbPronunceable.isChecked())
+            thePassword = rpass.getPronunceable(passLenght);
+        else
+            thePassword = rpass.getPass(passLenght);
+
         generatedPw.setText(thePassword);
 
     }
