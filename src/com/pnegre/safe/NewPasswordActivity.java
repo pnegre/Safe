@@ -7,10 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.*;
 
 import java.util.Random;
 
@@ -70,6 +67,20 @@ public class NewPasswordActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        cbPronunceable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b == true) {
+                    cbSymbols.setChecked(false);
+                    cbSymbols.setEnabled(false);
+
+                } else {
+                    cbSymbols.setEnabled(true);
+                }
+
             }
         });
 
