@@ -13,10 +13,10 @@ import java.security.Key;
  * Time: 22:49
  */
 
-public class SimpleCrypt {
+public class SimpleAESCryptECB {
     private SimpleAESCipher simpleCipher;
 
-    public SimpleCrypt(byte[] masterPw) {
+    public SimpleAESCryptECB(byte[] masterPw) {
         Key secretKey = new Key256AES(masterPw);
         simpleCipher = new SimpleAESCipher(secretKey);
     }

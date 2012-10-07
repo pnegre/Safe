@@ -4,7 +4,8 @@ import android.os.Environment;
 import android.util.Log;
 import com.pnegre.safe.database.Database;
 import com.pnegre.safe.database.Secret;
-import com.pnegre.simplecrypt.SimpleCrypt;
+import com.pnegre.simplecrypt.SimpleAESCryptCBC;
+import com.pnegre.simplecrypt.SimpleAESCryptECB;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,6 +27,14 @@ class Backup {
 
     private static final String BACKUP_DIR = "/Safe";
     private Database dataBase;
+
+    // Common initialization vector used for exporting and importing
+    // the encrypted database, using AES/CBC
+    static final byte[] iv = {
+        75,5,-4,3,23,72,4,45,
+        56,16,-5,4,-3,-48,122,21
+    };
+
 
     Backup(Database dataBase) {
         this.dataBase = dataBase;
@@ -64,7 +73,7 @@ class Backup {
         String filename = String.format("safe.backup.crypt.%d", System.currentTimeMillis());
         Log.v(SafeApp.LOG_TAG, "Writing " + filename);
         File file = new File(dir, filename);
-        SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
+        SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
         OutputStream os = simpleCrypt.cryptedOutputStream(new FileOutputStream(file));
 
         transformer.transform(new DOMSource(doc), new StreamResult(os));
@@ -75,7 +84,7 @@ class Backup {
     void doImport(String filename, String password) throws Exception {
         File dir = getSafeDirectory();
         File file = new File(dir, filename);
-        SimpleCrypt simpleCrypt = new SimpleCrypt(password.getBytes());
+        SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
         InputStream is = simpleCrypt.decryptedInputStream(new FileInputStream(file));
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();

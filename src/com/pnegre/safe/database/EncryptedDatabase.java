@@ -7,7 +7,7 @@ package com.pnegre.safe.database;
  */
 
 import android.content.Context;
-import com.pnegre.simplecrypt.SimpleCrypt;
+import com.pnegre.simplecrypt.SimpleAESCryptECB;
 import net.iharder.base64.Base64;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.util.Random;
  */
 public class EncryptedDatabase implements Database {
 
-    private SimpleCrypt mCrypt;
+    private SimpleAESCryptECB mCrypt;
     private boolean mIsReady;
     private Database cleanDatabase;
 
@@ -50,7 +50,7 @@ public class EncryptedDatabase implements Database {
                 if (!storedHash.equals(hash)) throw new PasswordIncorrectException();
             }
 
-            mCrypt = new SimpleCrypt(password.getBytes());
+            mCrypt = new SimpleAESCryptECB(password.getBytes());
             mIsReady = true;
             cleanDatabase = db;
 
