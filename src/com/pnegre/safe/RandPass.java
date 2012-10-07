@@ -3,9 +3,10 @@ package com.pnegre.safe;
 import java.util.Random;
 
 /**
- * User: pnegre
- * Date: 06/10/12
- * Time: 11:28
+ * Taken from: http://www.multicians.org/thvv/gpw.html
+ *
+ * Modified by Pere Negre (pere.negre@gmail.com)
+ *
  */
 
 class RandPass {
@@ -19,10 +20,8 @@ class RandPass {
     static final private String alph_symbols = "|@#<>!$%&/()=?¿{[]}";
 
     static GpwData data = new GpwData();
-    Random ran = new Random();
+    static Random ran = new Random();
     int flags = 0;
-
-    private String theAlph = alph_lower;
 
     RandPass(int alph) {
         setAlphabet(alph);
@@ -34,7 +33,11 @@ class RandPass {
 
 
     void setAlphabet(int flags) {
-        theAlph = alph_lower;
+        this.flags = flags;
+    }
+
+    String getPass(int len) {
+        String theAlph = alph_lower;
         if ((flags & UPPER) != 0)
             theAlph += theAlph.toUpperCase();
         if ((flags & NUMBERS) != 0)
@@ -42,11 +45,6 @@ class RandPass {
         if ((flags & SYMBOLS) != 0)
             theAlph += alph_symbols;
 
-        this.flags = flags;
-
-    }
-
-    String getPass(int len) {
         StringBuilder sb = new StringBuilder(len);
         for (int i=0; i<len; i++) {
             sb.append(theAlph.charAt(ran.nextInt(theAlph.length())));
@@ -116,9 +114,9 @@ class RandPass {
             pw = numify(pw);
         }
 
-        return pw; // Password generated
+        return pw;
 
-    } // generate()
+    }
 
 
 
