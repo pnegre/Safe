@@ -27,7 +27,7 @@ public class NewPasswordActivity extends Activity {
     private SeekBar seekBar;
     private TextView pwlen;
 
-    private RandPass rpass = new RandPass();
+    static private RandPass rpass = new RandPass();
     private int passLenght = 8;
     private String thePassword = "";
 

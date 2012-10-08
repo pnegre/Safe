@@ -169,7 +169,7 @@ public class SafeMainActivity extends ListActivity {
                         backup.doImport(chosen, mApp.masterPassword);
                     } catch (Exception e) {
                         showToast("Can't import!");
-                        e.printStackTrace();
+                        Log.v("SAFE", "Exception importing: " + e.toString());
                     }
                     setAdapter(mApp.getDatabase());
                 }

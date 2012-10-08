@@ -18,10 +18,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 
 class Backup {
@@ -66,12 +63,17 @@ class Backup {
         byte[] iv = randomIV();
         SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
         String iv_b64 = Base64.encodeBytes(iv);
+        Log.v("DEBUG_EXPORT","IV: " + Arrays.toString(iv));
+
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OutputStream os = simpleCrypt.cryptedOutputStream(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(getSecretsXMLString().getBytes());
         copyStream(bais,os);
+        os.flush();
+        os.close();
         String data_b64 = Base64.encodeBytes(baos.toByteArray());
+        Log.v("DEBUG_IMPORT","Data: " + Arrays.toString(baos.toByteArray()));
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.newDocument();
@@ -136,18 +138,55 @@ class Backup {
     void doImport(String filename, String password) throws Exception {
         File dir = getSafeDirectory();
         File file = new File(dir, filename);
-        SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
-        InputStream is = simpleCrypt.decryptedInputStream(new FileInputStream(file));
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.newDocument();
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.transform(new StreamSource(is), new DOMResult(doc));
+        transformer.transform(new StreamSource(new FileInputStream(file)), new DOMResult(doc));
 
+        byte[] iv = null;
+        byte[] xmldata = null;
 
-        doRealImport(doc);
+        Log.v("DEBUG_IMPORT","1111");
 
+        Node root = doc.getFirstChild();
+        NodeList nl = root.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node n = nl.item(i);
+            if (n.getNodeName().equals("iv")) {
+                String sn = ((Text) n.getFirstChild()).getData();
+                iv = Base64.decode(sn.getBytes());
+            }
+
+            if (n.getNodeName().equals("xmldata")) {
+                String sn = ((Text) n.getFirstChild()).getData();
+                xmldata = Base64.decode(sn.getBytes());
+            }
+        }
+
+        Log.v("DEBUG_IMPORT","IV: " + Arrays.toString(iv));
+        Log.v("DEBUG_IMPORT","Data: " + Arrays.toString(xmldata));
+
+        if (iv == null || xmldata == null)
+            throw new RuntimeException();
+
+        Log.v("DEBUG_IMPORT","IV lenght: " + Integer.toString(iv.length));
+        Log.v("DEBUG_IMPORT","Data lenght: " + Integer.toString(xmldata.length));
+
+        Log.v("DEBUG_IMPORT","11");
+        Document doc2 = db.newDocument();
+        Log.v("DEBUG_IMPORT","12");
+        SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
+        Log.v("DEBUG_IMPORT","13");
+        InputStream is = simpleCrypt.decryptedInputStream(new ByteArrayInputStream(xmldata));
+        Log.v("DEBUG_IMPORT","14");
+        Transformer transformer2 = TransformerFactory.newInstance().newTransformer();
+        Log.v("DEBUG_IMPORT","15");
+        transformer2.transform(new StreamSource(is), new DOMResult(doc2));
+        Log.v("DEBUG_IMPORT","16");
+        doRealImport(doc2);
+        Log.v("DEBUG_IMPORT","17");
     }
 
     private void doRealImport(Document doc) {
