@@ -77,8 +77,9 @@ public class InitialActivity extends Activity {
                 mApp.setMenuVisibility(true);
                 invalidateOptionsMenu();
                 mApp.masterPassword = pw;
-                finish();
+
                 startMainActivity();
+                finish();
             }
         }
         catch (EncryptedDatabase.PasswordIncorrectException e) {

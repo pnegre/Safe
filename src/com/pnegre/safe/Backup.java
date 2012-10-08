@@ -26,13 +26,6 @@ class Backup {
     private static final String BACKUP_DIR = "/Safe";
     private Database dataBase;
 
-    // Common initialization vector used for exporting and importing
-    // the encrypted database, using AES/CBC
-    static final byte[] iv = {
-        75,5,-4,3,23,72,4,45,
-        56,16,-5,4,-3,-48,122,21
-    };
-
     private static byte[] randomIV() {
         byte[] result = new byte[16];
         Random r = new Random();
@@ -63,8 +56,6 @@ class Backup {
         byte[] iv = randomIV();
         SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
         String iv_b64 = Base64.encodeBytes(iv);
-        Log.v("DEBUG_EXPORT","IV: " + Arrays.toString(iv));
-
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OutputStream os = simpleCrypt.cryptedOutputStream(baos);
@@ -73,7 +64,6 @@ class Backup {
         os.flush();
         os.close();
         String data_b64 = Base64.encodeBytes(baos.toByteArray());
-        Log.v("DEBUG_IMPORT","Data: " + Arrays.toString(baos.toByteArray()));
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.newDocument();
@@ -148,8 +138,6 @@ class Backup {
         byte[] iv = null;
         byte[] xmldata = null;
 
-        Log.v("DEBUG_IMPORT","1111");
-
         Node root = doc.getFirstChild();
         NodeList nl = root.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
@@ -165,28 +153,16 @@ class Backup {
             }
         }
 
-        Log.v("DEBUG_IMPORT","IV: " + Arrays.toString(iv));
-        Log.v("DEBUG_IMPORT","Data: " + Arrays.toString(xmldata));
-
         if (iv == null || xmldata == null)
             throw new RuntimeException();
 
-        Log.v("DEBUG_IMPORT","IV lenght: " + Integer.toString(iv.length));
-        Log.v("DEBUG_IMPORT","Data lenght: " + Integer.toString(xmldata.length));
 
-        Log.v("DEBUG_IMPORT","11");
         Document doc2 = db.newDocument();
-        Log.v("DEBUG_IMPORT","12");
         SimpleAESCryptCBC simpleCrypt = new SimpleAESCryptCBC(password.getBytes(), iv);
-        Log.v("DEBUG_IMPORT","13");
         InputStream is = simpleCrypt.decryptedInputStream(new ByteArrayInputStream(xmldata));
-        Log.v("DEBUG_IMPORT","14");
         Transformer transformer2 = TransformerFactory.newInstance().newTransformer();
-        Log.v("DEBUG_IMPORT","15");
         transformer2.transform(new StreamSource(is), new DOMResult(doc2));
-        Log.v("DEBUG_IMPORT","16");
         doRealImport(doc2);
-        Log.v("DEBUG_IMPORT","17");
     }
 
     private void doRealImport(Document doc) {
