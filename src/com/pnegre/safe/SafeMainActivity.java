@@ -38,7 +38,6 @@ public class SafeMainActivity extends ListActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mApp.setMenuVisibility(false);
         Database db = mApp.getDatabase();
         if (db != null)
             db.destroy();
@@ -67,14 +66,6 @@ public class SafeMainActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainmenu, menu);
-
-        if (mApp.menuVisible()) {
-            menu.findItem(R.id.newsecret).setVisible(true);
-            menu.findItem(R.id.importsecrets).setVisible(true);
-            menu.findItem(R.id.exportsecrets).setVisible(true);
-            menu.findItem(R.id.changepw).setVisible(true);
-        }
-
         return true;
     }
 

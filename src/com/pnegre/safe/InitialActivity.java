@@ -74,7 +74,6 @@ public class InitialActivity extends Activity {
             Database db = new EncryptedDatabase(new SQLDatabase(mApp), mApp, pw, false);
             if (db.ready()) {
                 mApp.setDatabase(db);
-                mApp.setMenuVisibility(true);
                 invalidateOptionsMenu();
                 mApp.masterPassword = pw;
 
