@@ -26,6 +26,7 @@ public class NewPasswordActivity extends Activity {
     private CheckBox cbPronunceable;
     private SeekBar seekBar;
     private TextView pwlen;
+    private boolean menuVisible = true;
 
     static private RandPass rpass = new RandPass();
     private int passLenght = 8;
@@ -34,6 +35,13 @@ public class NewPasswordActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newpassword);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            boolean st = extras.getBoolean("standalone");
+            if (st)
+                menuVisible = false;
+        }
 
         butGenerate = (Button) findViewById(R.id.pwgenerate);
         generatedPw = (TextView) findViewById(R.id.pwgenerated);
@@ -110,10 +118,13 @@ public class NewPasswordActivity extends Activity {
     // Inflate res/menu/mainmenu.xml
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menunewpassword, menu);
-
-        return true;
+        if (menuVisible) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menunewpassword, menu);
+            return true;
+        } else {
+            return super.onCreateOptionsMenu(menu);
+        }
     }
 
     // Respond to user click on menu

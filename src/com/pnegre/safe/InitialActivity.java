@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,6 +86,32 @@ public class InitialActivity extends Activity {
         }
         catch (EncryptedDatabase.PasswordIncorrectException e) {
             Toast.makeText(this, "Password Incorrect", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Inflate res/menu/mainmenu.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.initialmenu, menu);
+        return true;
+    }
+
+
+
+
+    // Respond to user click on menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.inewpass:
+                Intent i = new Intent(this, NewPasswordActivity.class);
+                i.putExtra("standalone", true);
+                startActivity(i);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
