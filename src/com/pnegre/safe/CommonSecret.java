@@ -3,6 +3,7 @@ package com.pnegre.safe;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,12 +27,21 @@ abstract class CommonSecret extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newsecret);
-        mApp = (SafeApp) getApplication();
-        mDatabase = mApp.getDatabase();
 
         mETsitename = (EditText) findViewById(R.id.sitename);
         mETusername = (EditText) findViewById(R.id.siteusname);
         mETpassword = (EditText) findViewById(R.id.sitepassword);
+    }
+
+    public void onResume() {
+        super.onResume();
+        mApp = (SafeApp) getApplication();
+        mDatabase = mApp.getDatabase();
+        if (mDatabase == null) {
+            Intent i = new Intent(this, InitialActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 
 

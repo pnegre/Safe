@@ -30,9 +30,6 @@ public class SafeMainActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mApp = (SafeApp) getApplication();
-        ListView lv = getListView();
-        LayoutInflater inflater = getLayoutInflater();
-        setAdapter(mApp.getDatabase());
     }
 
     @Override
