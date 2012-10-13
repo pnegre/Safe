@@ -50,7 +50,12 @@ public class SafeMainActivity extends ListActivity {
         if (mShowingDialog) return;
 
         Database db = mApp.getDatabase();
-        if (db == null) return;
+        // If database is null, reset the application
+        if (db == null) {
+            Intent i = new Intent(this, InitialActivity.class);
+            startActivity(i);
+            finish();
+        }
 
         if (db.ready() == true)
             setAdapter(db);
