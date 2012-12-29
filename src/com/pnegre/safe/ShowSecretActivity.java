@@ -32,8 +32,6 @@ public class ShowSecretActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.showsecret);
-        mApp = (SafeApp) getApplication();
-        mDatabase = mApp.getDatabase();
 
         mTVName = (TextView) findViewById(R.id.secretsitename);
         mTVUsname = (TextView) findViewById(R.id.secretsiteusname);
@@ -52,6 +50,15 @@ public class ShowSecretActivity extends Activity {
         // Refresh data
         Bundle extras = getIntent().getExtras();
         int secretId = extras.getInt("secretid");
+
+        mApp = (SafeApp) getApplication();
+        mDatabase = mApp.getDatabase();
+        if (mDatabase == null) {
+            SafeApp.initMainActivity(this);
+            finish();
+            return;
+        }
+
         mSecret = mDatabase.getSecret(secretId);
         mTVName.setText(mSecret.name);
         mTVUsname.setText(mSecret.username);

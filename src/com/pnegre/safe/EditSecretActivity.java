@@ -29,12 +29,26 @@ public class EditSecretActivity extends CommonSecret {
             }
         });
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mDatabase == null) {
+            SafeApp.initMainActivity(this);
+            finish();
+            return;
+        }
+
         Bundle extras = getIntent().getExtras();
         int secretId = extras.getInt("secretid");
         mSecret = mDatabase.getSecret(secretId);
         mETsitename.setText(mSecret.name);
         mETusername.setText(mSecret.username);
         mETpassword.setText(SafeApp.PASS_HIDE_STRING);
+
     }
 
     @Override

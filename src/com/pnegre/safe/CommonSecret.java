@@ -37,11 +37,7 @@ abstract class CommonSecret extends Activity {
         super.onResume();
         mApp = (SafeApp) getApplication();
         mDatabase = mApp.getDatabase();
-        if (mDatabase == null) {
-            Intent i = new Intent(this, InitialActivity.class);
-            startActivity(i);
-            finish();
-        }
+
     }
 
 
@@ -91,20 +87,6 @@ abstract class CommonSecret extends Activity {
 
         RandPass rp = new RandPass(RandPass.NUMBERS | RandPass.UPPER);
         return rp.getPass(8);
-
-
-
-
-
-
-//        Random rnd = new Random();
-//        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//        final String allChars = AB + AB.toLowerCase() + "0123456789";
-//        StringBuilder sb = new StringBuilder(len);
-//        for (int i=0; i<len; i++) {
-//            sb.append(allChars.charAt(rnd.nextInt(allChars.length())));
-//        }
-//        return sb.toString();
     }
 
     protected abstract void saveNewSecret(String sname, String pw, String usname);

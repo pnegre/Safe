@@ -26,4 +26,15 @@ public class NewSecretActivity extends CommonSecret {
         finish();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mDatabase == null) {
+            SafeApp.initMainActivity(this);
+            finish();
+            return;
+        }
+    }
+
 }
