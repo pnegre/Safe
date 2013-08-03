@@ -33,20 +33,13 @@ public class EncryptedDatabase implements Database {
         try {
             String storedHash = sql2.getPassword();
             String salt = sql2.getSalt();
-            String saltedPassword = "";
 
             if (salt == null || storedHash == null || force) {
                 salt = generateSalt();
-                saltedPassword = salt + password;
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                md.update(saltedPassword.getBytes());
-                String hash = Base64.encodeBytes(md.digest());
+                String hash = calculateHash(password, salt);
                 sql2.savePassword(hash, salt);
             } else {
-                saltedPassword = salt + password;
-                MessageDigest md = MessageDigest.getInstance("MD5");
-                md.update(saltedPassword.getBytes());
-                String hash = Base64.encodeBytes(md.digest());
+                String hash = calculateHash(password, salt);
                 if (!storedHash.equals(hash)) throw new PasswordIncorrectException();
             }
 
@@ -54,22 +47,40 @@ public class EncryptedDatabase implements Database {
             mIsReady = true;
             cleanDatabase = db;
 
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Fatal: Algorithm MD5 Not supported");
+        } catch (PasswordIncorrectException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             sql2.close();
         }
     }
 
     private String generateSalt() {
+        final int SALTLENGTH = 50;
         Random rnd = new Random();
         final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        final String allChars = AB + AB.toLowerCase() + "0123456789";
-        StringBuilder sb = new StringBuilder(10);
-        for (int i=0; i<10; i++) {
+        final String allChars = AB + AB.toLowerCase() + "0123456789" + "|@#~½¬{[]}!·$%&/()=?¿*Ç¨^_:;,.-";
+        StringBuilder sb = new StringBuilder(SALTLENGTH);
+        for (int i=0; i<SALTLENGTH; i++) {
             sb.append(allChars.charAt(rnd.nextInt(allChars.length())));
         }
         return sb.toString();
+    }
+
+    private String calculateHash(String pw, String salt) throws Exception {
+        final int NROUNDS = 1000;
+        String saltedPw = salt + pw;
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        byte[] pwBytes = saltedPw.getBytes();
+        md.update(pwBytes);
+        for (int i=1; i<NROUNDS; i++) {
+            byte[] dd = md.digest();
+            md.reset();
+            md.update(dd);
+            md.update(pwBytes);
+        }
+        return Base64.encodeBytes(md.digest());
     }
 
 

@@ -26,19 +26,29 @@ class Key256AES implements Key, KeySpec, SecretKey {
     }
 
     private void deriveRealKey(byte[] initialKey) {
+        realKey = new byte[32];
+        byte[] digest = calculateDigest(initialKey);
+        int i = 0, j = 0;
+        while (i < 32) {
+            realKey[i++] = digest[j];
+            j = (j + 1) % digest.length;
+        }
+    }
+
+    private byte[] calculateDigest(byte[] k) {
+        final int NROUNDS = 1;
         try {
-            realKey = new byte[32];
-            MessageDigest md = null;
-            md = MessageDigest.getInstance("SHA-512");
-            md.update(initialKey);
-            byte[] digest = md.digest();
-            int i = 0, j = 0;
-            while (i < 32) {
-                realKey[i++] = digest[j];
-                j = (j + 1) % digest.length;
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(k);
+            for (int i = 1; i < NROUNDS; i++) {
+                byte[] dd = md.digest();
+                md.reset();
+                md.update(dd);
+                md.update(k);
             }
+            return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Algorithm SHA-512 not supported");
+            throw new RuntimeException(e);
         }
     }
 

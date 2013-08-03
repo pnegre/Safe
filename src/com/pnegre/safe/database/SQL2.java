@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class SQL2 extends SQLiteOpenHelper {
 
     static final String DB_NAME = "safe_secret.db";
-    static final int DB_VERSION = 5;
+    static final int DB_VERSION = 6;
 
     // Constructor
     public SQL2(Context context) {
